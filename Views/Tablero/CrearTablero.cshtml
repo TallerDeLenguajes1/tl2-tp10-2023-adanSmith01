@@ -1,0 +1,19 @@
+@model Tablero
+
+<h1>Crear Tablero</h1>
+
+<form asp-controller = "Tablero" asp-action="CrearTablero" method="post">
+    <section class="mb-3">
+        <label>Nombre: </label>
+        <input asp-for = "@Model.Nombre" placeholder = "Ej. tablero-de-usuario" required>
+    </section>
+    <section class="mb-3">
+        <label>Descripcion: </label>
+        <input asp-for = "@Model.Descripcion">
+    </section>
+    <section class="mb-3">
+        <label>Id de usuario propietario: </label>
+        <input asp-for = "@Model.IdUsuarioPropietario" required>
+    </section>
+    <input type="submit">
+</form>
