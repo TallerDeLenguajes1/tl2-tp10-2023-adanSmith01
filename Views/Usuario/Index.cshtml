@@ -1,0 +1,35 @@
+@model List<Usuario>
+
+<section>
+    <a asp-controller="Usuario" asp-action="CrearUsuario">+ Añadir Usuario</a>
+    <h2>Usuarios</h2>
+    <table>
+        <thead>
+            <tr>
+                <th hidden>ID</th>
+                <th>Nombre</th>
+                <th>Modificar</th>
+                <th>Eliminar</th>
+                <th>Tareas</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in Model)
+            {
+                <tr>
+                    <td hidden>@usuario.Id</td>
+                    <td>@usuario.NombreUsuario</td>
+                    <td>
+                        <a asp-controller="Usuario" asp-action="ActualizarUsuario" asp-route-idUsuario = "@usuario.Id">Modificar</a>
+                    </td>
+                    <td>
+                        <a asp-controller="Usuario" asp-action="DarBaja" asp-route-idUsuario = "@usuario.Id">Eliminar</a>
+                    </td>
+                    <td>
+                        <a asp-controller="Tarea" asp-action="ListarTareasUsuario" asp-route-idUsuario = "@usuario.Id">Ver</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</section>

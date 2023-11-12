@@ -1,0 +1,16 @@
+@model Usuario
+
+@if (String.IsNullOrEmpty(Model.NombreUsuario))
+{
+    <article>
+        <p><strong>ERROR 404</strong></p>
+    </article>
+
+}else{
+    <form asp-controller="Usuario" asp-action="ActualizarUsuario" method="post">
+        <label>Nombre:</label>
+        <input asp-for="@Model.NombreUsuario" value="@Model.NombreUsuario">
+        <input hidden asp-for="@Model.Id">
+        <input type="submit">
+    </form>
+}

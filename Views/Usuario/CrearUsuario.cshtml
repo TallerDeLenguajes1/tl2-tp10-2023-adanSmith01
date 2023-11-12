@@ -1,0 +1,9 @@
+@model Usuario
+
+<h1>Crear Usuario</h1>
+
+<form asp-controller = "Usuario" asp-action="CrearUsuario" method="post">
+    <label>Nombre: </label>
+    <input asp-for = "@Model.NombreUsuario" placeholder = "Ej. usuario123">
+    <input type="submit">
+</form>
