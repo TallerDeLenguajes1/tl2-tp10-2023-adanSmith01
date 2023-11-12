@@ -1,0 +1,30 @@
+@model tl2_tp10_2023_adanSmith01.Models.Tarea
+
+<section>
+    <h2>Crear tarea</h2>
+    <form asp-controller="Tarea" asp-action="CrearTarea" asp-route-idTablero="@ViewBag.IdTablero" method="post">
+        <section>
+            <label>Nombre: </label>
+            <input asp-for="@Model.Nombre" required>
+        </section>
+        <section>
+            <label>Descripcion: </label>
+            <input asp-for="@Model.Descripcion">
+        </section>
+        <section>
+            <label>Color: </label>
+            <input asp-for="@Model.Color">
+        </section>
+        <section>
+            <label asp-for="@Model.Estado">Estado de la tarea: </label>
+            <select asp-for="@Model.Estado" asp-items="@Html.GetEnumSelectList<EstadoTarea>()">
+            </select>
+        </section>
+        <section>
+            <label asp-for="@Model.IdUsuarioAsignado">Id usuario asignado: </label>
+            <input asp-for="@Model.IdUsuarioAsignado">
+        </section>
+        <input hidden asp-for="@Model.IdTablero" value="@ViewBag.IdTablero">
+        <input type="submit">
+    </form>
+</section>

@@ -1,0 +1,31 @@
+@model Tarea
+
+<section>
+    <h2>Actualizar tarea</h2>
+    <form asp-controller="Tarea" asp-action="ActualizarTarea" method="post">
+        <section>
+            <label>Nombre: </label>
+            <input asp-for="@Model.Nombre" value="@Model.Nombre">
+        </section>
+        <section>
+            <label>Descripcion: </label>
+            <input asp-for="@Model.Descripcion" value="@Model.Descripcion">
+        </section>
+        <section>
+            <label>Color: </label>
+            <input asp-for="@Model.Color" value="@Model.Color">
+        </section>
+        <section>
+            <label>Estado de la tarea: </label>
+            <select asp-for="@Model.Estado" asp-items="@Html.GetEnumSelectList<EstadoTarea>()">
+            </select>
+        </section>
+        <section>
+            <label asp-for="@Model.IdUsuarioAsignado">Id usuario asignado: </label>
+            <input asp-for="@Model.IdUsuarioAsignado">
+        </section>
+        <input hidden asp-for="@Model.IdTablero" value="@Model.IdTablero">
+        <input hidden asp-for="@Model.Id" value="@Model.Id">
+        <input type="submit">
+    </form>
+</section>

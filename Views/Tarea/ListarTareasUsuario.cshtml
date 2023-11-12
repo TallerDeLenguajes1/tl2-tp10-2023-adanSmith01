@@ -1,0 +1,35 @@
+@model List<Tarea>
+
+    <section>
+        <h2>Tareas</h2>
+
+        @if(Model.Count > 0){
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id tablero</th>
+                        <th>Nombre</th>
+                        <th>Descripcion</th>
+                        <th>Color</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var tarea in Model)
+                    {
+                        <tr>
+                            <td hidden>@tarea.Id</td>
+                            <td>@tarea.IdTablero</td>
+                            <td>@tarea.Nombre</td>
+                            <td>@tarea.Descripcion</td>
+                            <td>@tarea.Color</td>
+                            <td>@tarea.Estado.ToString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        } else{
+            <p><strong>No hay tareas asignadas para este usuario</strong></p>
+        }
+        
+    </section>
