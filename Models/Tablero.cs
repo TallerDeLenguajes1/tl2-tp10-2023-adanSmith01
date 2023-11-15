@@ -1,4 +1,4 @@
-namespace tl2_tp10_2023_adanSmith01;
+namespace tl2_tp10_2023_adanSmith01.Models;
 
 public class Tablero
 {
