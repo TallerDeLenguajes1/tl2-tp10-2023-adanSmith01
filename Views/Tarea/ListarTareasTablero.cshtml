@@ -24,7 +24,11 @@
                         <tr>
                             <td hidden>@tarea.IdTablero</td>
                             <td>@tarea.Nombre</td>
-                            <td>@tarea.Descripcion</td>
+                            @if(String.IsNullOrEmpty(tarea.Descripcion)){
+                                <td>sin descripcion</td>
+                            }else{
+                                <td>@tarea.Descripcion</td>
+                            }
                             <td style="background-color: @tarea.Color;"></td>
                             <td>@tarea.Estado.ToString()</td>
                             @if(tarea.IdUsuarioAsignado != null){
