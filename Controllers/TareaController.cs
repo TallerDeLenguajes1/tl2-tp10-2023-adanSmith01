@@ -16,12 +16,6 @@ public class TareaController : Controller
     }
 
     [HttpGet]
-    public IActionResult ListarTareasUsuario(int idUsuario){
-        var tareas = tareasRepo.GetTareasDeUsuario(idUsuario);
-        return View(tareas);
-    }
-
-    [HttpGet]
     public IActionResult ListarTareasTablero(int idTablero){
         var tareas = tareasRepo.GetTareasDeTablero(idTablero);
         return View(tareas);

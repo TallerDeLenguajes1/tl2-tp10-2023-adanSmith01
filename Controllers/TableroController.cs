@@ -16,13 +16,8 @@ public class TableroController: Controller
     }
 
     [HttpGet]
-    public IActionResult Index(){
-        var tableros = tableroRepo.GetAllTableros();
-        return View(tableros);
-    }
-
-    [HttpGet]
-    public IActionResult CrearTablero(){
+    public IActionResult CrearTablero(int idUsuario){
+        ViewBag.IdUsuario = idUsuario;
         return View(new Tablero());
     }
 
@@ -31,20 +26,27 @@ public class TableroController: Controller
         return View(tableroRepo.GetTablero(idTablero));
     }
 
+    [HttpGet]
+    public IActionResult ListarTablerosUsuario(int idUsuario){
+        var tableros = tableroRepo.GetTablerosDeUsuario(idUsuario);
+        return View(tableros);
+    }
+
     [HttpPost]
     public IActionResult CrearTablero(Tablero nuevo){
         tableroRepo.CrearTablero(nuevo);
-        return RedirectToAction("Index");
+        return RedirectToAction("ListarTablerosUsuario", new{idUsuario = nuevo.IdUsuarioPropietario});
     }
 
     [HttpPost]
     public IActionResult ActualizarTablero(Tablero tableroAModificar){
         tableroRepo.ModificarTablero(tableroAModificar);
-        return RedirectToAction("Index");
+        return RedirectToAction("ListarTablerosUsuario", new{idUsuario = tableroAModificar.IdUsuarioPropietario});
     }
 
     public IActionResult EliminarTablero(int idTablero){
+        var id = tableroRepo.GetTablero(idTablero).IdUsuarioPropietario;
         tableroRepo.EliminarTablero(idTablero);
-        return RedirectToAction("Index");
+        return RedirectToAction("ListarTablerosUsuario", new{idUsuario = id});
     }
 }
