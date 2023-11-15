@@ -14,9 +14,64 @@ html {
 
 html {
   position: relative;
-  min-height: 100%;
+  height: 100%;
 }
 
 body {
   margin-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.content-view{
+  margin:1.5em auto;
+}
+
+.title-view{
+  margin-bottom:1.5em;
+}
+
+.form-view{
+  width: 50%;
+  margin:2em auto;
+}
+
+form input[type="submit"]{
+  margin-top: 2em;
+}
+
+.btn-add{
+  margin-top:1.5em;
+  margin-bottom:1.5em;
+}
+
+table{
+  text-align: center;
+}
+
+footer{
+  background-color: rgb(75, 73, 73);
+  text-align: center;
+  padding: 1em;
+  margin-top: auto;
+}
+
+footer div{
+  color: white;
+}
+
+.form-logger{
+  margin: 3em auto;
+  width: 30%;
+}
+
+.form-logger input[type="submit"]{
+  width: 100%;
+  color:black;
+}
+
+.form-logger input[type="submit"]:hover, .form-logger input[type="submit"]:focus{
+  color:white;
+  background-color: #258cfb;
 }
