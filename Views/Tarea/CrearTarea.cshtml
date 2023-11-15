@@ -1,30 +1,35 @@
 @model tl2_tp10_2023_adanSmith01.Models.Tarea
 
+@{ViewData["title"]="Crear tarea";}
+
 <section>
-    <h2>Crear tarea</h2>
-    <form asp-controller="Tarea" asp-action="CrearTarea" asp-route-idTablero="@ViewBag.IdTablero" method="post">
-        <section>
-            <label>Nombre: </label>
-            <input asp-for="@Model.Nombre" required>
+    <h1 class="text-center">Crear tarea</h1>
+    <form asp-controller="Tarea" asp-action="CrearTarea" asp-route-idTablero="@ViewBag.IdTablero" method="post" class="form-view" onsubmit="getColor()">
+        <section class="mb-3">
+            <label class="form-label">Nombre: </label>
+            <input asp-for="@Model.Nombre" class="form-control" required>
         </section>
-        <section>
-            <label>Descripcion: </label>
-            <input asp-for="@Model.Descripcion">
+        <section class="mb-3">
+            <label class="form-label">Descripcion: </label>
+            <input asp-for="@Model.Descripcion" class="form-control">
         </section>
-        <section>
-            <label>Color: </label>
-            <input asp-for="@Model.Color">
+        <section class="mb-3">
+            <label class="form-label">Color: </label>
+            <input type="color" id="colorTarea">
+            <input hidden asp-for="@Model.Color" id="Color" class="form-control">
         </section>
-        <section>
-            <label asp-for="@Model.Estado">Estado de la tarea: </label>
-            <select asp-for="@Model.Estado" asp-items="@Html.GetEnumSelectList<EstadoTarea>()">
+        <section class="mb-3">
+            <label asp-for="@Model.Estado" class="form-label">Estado de la tarea: </label>
+            <select asp-for="@Model.Estado" asp-items="@Html.GetEnumSelectList<EstadoTarea>()" class="form-select" aria-label="Default select example">
             </select>
         </section>
-        <section>
-            <label asp-for="@Model.IdUsuarioAsignado">Id usuario asignado: </label>
-            <input asp-for="@Model.IdUsuarioAsignado">
+        <section class="mb-3">
+            <label asp-for="@Model.IdUsuarioAsignado" class="form-label">Id usuario asignado: </label>
+            <input asp-for="@Model.IdUsuarioAsignado" class="form-control">
         </section>
         <input hidden asp-for="@Model.IdTablero" value="@ViewBag.IdTablero">
-        <input type="submit">
+        <input type="submit" value="Confirmar" class="btn btn-outline-success">
     </form>
 </section>
+
+<script src="../js/site.js"></script>

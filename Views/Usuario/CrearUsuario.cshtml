@@ -1,9 +1,11 @@
 @model Usuario
 
-<h1>Crear Usuario</h1>
+@{ViewData["title"]="Crear usuario";}
 
-<form asp-controller = "Usuario" asp-action="CrearUsuario" method="post">
-    <label>Nombre: </label>
-    <input asp-for = "@Model.NombreUsuario" placeholder = "Ej. usuario123">
-    <input type="submit">
+<h1 class="text-center">Crear usuario</h1>
+
+<form asp-controller = "Usuario" asp-action="CrearUsuario" method="post" class="form-view">
+    <label class="form-label">Nombre </label>
+    <input asp-for = "@Model.NombreUsuario" placeholder = "Ej. usuario123" class="form-control">
+    <input type="submit" class="btn btn-outline-success">
 </form>

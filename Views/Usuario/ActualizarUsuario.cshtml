@@ -1,16 +1,20 @@
 @model Usuario
 
-@if (String.IsNullOrEmpty(Model.NombreUsuario))
-{
-    <article>
-        <p><strong>ERROR 404</strong></p>
-    </article>
+@{ViewData["title"]="Actualizar usuario";}
 
-}else{
-    <form asp-controller="Usuario" asp-action="ActualizarUsuario" method="post">
-        <label>Nombre:</label>
-        <input asp-for="@Model.NombreUsuario" value="@Model.NombreUsuario">
-        <input hidden asp-for="@Model.Id">
-        <input type="submit">
-    </form>
-}
+<h1 class="text-center">Actualizar usuario</h1>
+<section>
+    <article>
+        @if (String.IsNullOrEmpty(Model.NombreUsuario))
+        {
+           <p><strong>ERROR 404</strong></p>
+        }else{
+            <form asp-controller="Usuario" asp-action="ActualizarUsuario" method="post" class="form-view">
+                <label class="form-label">Nombre</label>
+                <input asp-for="@Model.NombreUsuario" value="@Model.NombreUsuario" class="form-control">
+                <input hidden asp-for="@Model.Id">
+                <input type="submit" class="btn btn-outline-success">
+            </form>
+        }
+    </article>
+</section>
