@@ -1,4 +1,6 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿function getColor(){
+    var color = document.getElementById("colorTarea");
+    var string_color = document.getElementById("Color");
 
-// Write your JavaScript code.
+    string_color.value = color.value;
+}
