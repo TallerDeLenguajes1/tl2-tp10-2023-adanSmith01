@@ -17,19 +17,30 @@ public class TareaController : Controller
 
     [HttpGet]
     public IActionResult ListarTareasTablero(int idTablero){
-        var tareas = tareasRepo.GetTareasDeTablero(idTablero);
-        return View(tareas);
+        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))){
+            var tareas = tareasRepo.GetTareasDeTablero(idTablero);
+            return View(tareas);
+        }else{
+            return RedirectToRoute(new {controller = "Logueo", action="Index"});
+        }
+        
     }
 
     [HttpGet]
     public IActionResult CrearTarea(int idTablero){
-        ViewBag.IdTablero = idTablero;
-        return View();
+        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))){
+            ViewBag.IdTablero = idTablero;
+            return View();
+        }else{
+            return RedirectToRoute(new {controller = "Logueo", action="Index"});
+        }
+        
     }
 
     [HttpGet]
     public IActionResult ActualizarTarea(int idTarea){
-        return View(tareasRepo.GetTarea(idTarea));
+        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return View(tareasRepo.GetTarea(idTarea));
+        else return RedirectToRoute(new {controller = "Logueo", action="Index"});
     }
 
     [HttpPost]

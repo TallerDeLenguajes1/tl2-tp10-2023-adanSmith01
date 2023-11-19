@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using tl2_tp10_2023_adanSmith01.Models;
 using tl2_tp10_2023_adanSmith01.Repository;
+using tl2_tp10_2023_adanSmith01.ViewModels;
 namespace tl2_tp10_2023_adanSmith01.Controllers;
 
 public class UsuarioController : Controller
@@ -17,28 +18,41 @@ public class UsuarioController : Controller
 
     [HttpGet]
     public IActionResult Index(){
-        var usuarios = usuarioRepo.GetAllUsuarios();
-        return View(usuarios);
+        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario")) && (HttpContext.Session.GetString("rol")) == "Administrador"){
+            var usuarios = usuarioRepo.GetAllUsuarios();
+            return View(new IndexUsuariosViewModel(usuarios));
+        }else{
+            return RedirectToRoute(new {controller = "Logueo", action="Index"});
+        }
     }
 
     [HttpGet]
     public IActionResult CrearUsuario(){
-        return View(new Usuario());
+        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario")) && (HttpContext.Session.GetString("rol")) == Rol.Administrador.ToString()) return View(new CrearUsuarioViewModel());
+        else return RedirectToRoute(new {controller = "Logueo", action="Index"});
     }
 
     [HttpGet]
     public IActionResult ActualizarUsuario(int idUsuario){
-        return View(usuarioRepo.GetUsuario(idUsuario));
+        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario")) && (HttpContext.Session.GetString("rol")) == Rol.Administrador.ToString()){
+            var usuario = usuarioRepo.GetUsuario(idUsuario);
+            if(!String.IsNullOrEmpty(usuario.NombreUsuario)){
+                return View(new ActualizarUsuarioViewModel(usuario));
+            }// En caso contrario, se muestra un 404 Not Found
+        }
+        return RedirectToRoute(new {controller = "Logueo", action="Index"});
     }
 
     [HttpPost]
-    public IActionResult CrearUsuario(Usuario nuevo){
+    public IActionResult CrearUsuario(CrearUsuarioViewModel nuevoUsuario){
+        var nuevo = new Usuario(nuevoUsuario);
         usuarioRepo.CrearUsuario(nuevo);
         return RedirectToAction("Index");
     }
 
     [HttpPost]
-    public IActionResult ActualizarUsuario(Usuario usuarioAModificar){
+    public IActionResult ActualizarUsuario(ActualizarUsuarioViewModel usuario){
+        var usuarioAModificar = new Usuario(usuario);
         usuarioRepo.ModificarUsuario(usuarioAModificar);
         return RedirectToAction("Index");
     }

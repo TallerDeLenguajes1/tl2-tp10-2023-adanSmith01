@@ -17,19 +17,39 @@ public class TableroController: Controller
 
     [HttpGet]
     public IActionResult CrearTablero(int idUsuario){
-        ViewBag.IdUsuario = idUsuario;
-        return View(new Tablero());
+        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))){
+            ViewBag.IdUsuario = idUsuario;
+            return View(new Tablero());
+        }else{
+            return RedirectToRoute(new {controller = "Logueo", action="Index"});
+        }
     }
 
     [HttpGet]
     public IActionResult ActualizarTablero(int idTablero){
-        return View(tableroRepo.GetTablero(idTablero));
+        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return View(tableroRepo.GetTablero(idTablero));
+        else return RedirectToRoute(new {controller = "Logueo", action="Index"});
+    }
+
+    [HttpGet]
+    public IActionResult MisTableros(){
+        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))){
+            var tableros = tableroRepo.GetTablerosDeUsuario(Convert.ToInt32(HttpContext.Session.GetString("id")));
+            return View(tableros);
+        }else{
+            return RedirectToRoute(new {controller = "Logueo", action="Index"});
+        }
     }
 
     [HttpGet]
     public IActionResult ListarTablerosUsuario(int idUsuario){
-        var tableros = tableroRepo.GetTablerosDeUsuario(idUsuario);
-        return View(tableros);
+        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))){
+            var tableros = tableroRepo.GetTablerosDeUsuario(idUsuario);
+            return View(tableros);
+        }else{
+            return RedirectToRoute(new {controller = "Logueo", action="Index"});
+        }
+        
     }
 
     [HttpPost]
@@ -49,4 +69,6 @@ public class TableroController: Controller
         tableroRepo.EliminarTablero(idTablero);
         return RedirectToAction("ListarTablerosUsuario", new{idUsuario = id});
     }
+
+    
 }
