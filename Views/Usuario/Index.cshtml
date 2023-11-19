@@ -1,4 +1,4 @@
-@model List<Usuario>
+@model tl2_tp10_2023_adanSmith01.ViewModels.IndexUsuariosViewModel
 
 @{ ViewData["Title"] = "Usuarios"; }
 
@@ -8,19 +8,19 @@
     <table class="table">
         <thead>
             <tr>
-                <th hidden>ID</th>
                 <th>Nombre</th>
+                <th>Rol</th>
                 <th>Modificar usuario</th>
                 <th>Eliminar usuario</th>
                 <th>Tableros</th>
             </tr>
         </thead>
         <tbody class="table-group-divider">
-            @foreach (var usuario in Model)
+            @foreach (var usuario in Model.ListaUsuariosVM)
             {
                 <tr>
-                    <td hidden>@usuario.Id</td>
-                    <td>@usuario.NombreUsuario</td>
+                    <td>@usuario.Nombre</td>
+                    <td>@usuario.Rol.ToString()</td>
                     <td>
                         <a asp-controller="Usuario" asp-action="ActualizarUsuario" asp-route-idUsuario = "@usuario.Id" class="btn btn-outline-info">Modificar
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
