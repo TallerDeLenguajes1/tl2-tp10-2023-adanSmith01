@@ -7,5 +7,7 @@ public interface IUsuarioRepository
     void ModificarUsuario(Usuario usuarioModificar);
     List<Usuario> GetAllUsuarios();
     Usuario GetUsuario(int idUsuario);
+    Usuario GetUsuario(string nombre, string contrasenia);
     void EliminarUsuario(int idUsuario);
+    
 }

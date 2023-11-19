@@ -12,10 +12,15 @@ public class UsuarioRepository: IUsuarioRepository
         {
             connection.Open();
             
-            string queryString = @"INSERT INTO Usuario (nombre_de_usuario) VALUES (@nombreUsuario);";
+            string queryString = @"
+            INSERT INTO Usuario (nombre_de_usuario, contrasenia, rol) 
+            VALUES (@nombreUsuario, @contraseniaUsuario, @rolUsuario);
+            ";
             var command = new SQLiteCommand(queryString, connection);
 
             command.Parameters.Add(new SQLiteParameter("@nombreUsuario", nuevoUsuario.NombreUsuario));
+            command.Parameters.Add(new SQLiteParameter("@contraseniaUsuario", nuevoUsuario.Contrasenia));
+            command.Parameters.Add(new SQLiteParameter("@rolUsuario", Convert.ToInt32(nuevoUsuario.RolUsuario)));
             command.ExecuteNonQuery();
             connection.Close();
         }
@@ -25,12 +30,20 @@ public class UsuarioRepository: IUsuarioRepository
         using(var connection = new SQLiteConnection(connectionString))
         {
             connection.Open();
-
-            string queryString = @"UPDATE Usuario SET nombre_de_usuario = @nombreNuevo WHERE id = @idUsuario;";
+            string queryString;
+            if(!String.IsNullOrEmpty(usuarioModificar.Contrasenia)){
+                queryString = @"UPDATE Usuario SET nombre_de_usuario = @nombreNuevo, contrasenia = @contraseniaUsuario, rol = @rolUsuario  
+            WHERE id = @idUsuario;";
+            }else{
+                queryString = @"UPDATE Usuario SET nombre_de_usuario = @nombreNuevo, rol = @rolUsuario  
+            WHERE id = @idUsuario;";
+            }
             var command = new SQLiteCommand(queryString, connection);
 
             command.Parameters.Add(new SQLiteParameter("@idUsuario", usuarioModificar.Id));
             command.Parameters.Add(new SQLiteParameter("@nombreNuevo", usuarioModificar.NombreUsuario));
+            if(!String.IsNullOrEmpty(usuarioModificar.Contrasenia))command.Parameters.Add(new SQLiteParameter("@contraseniaUsuario", usuarioModificar.Contrasenia));
+            command.Parameters.Add(new SQLiteParameter("@rolUsuario", Convert.ToInt32(usuarioModificar.RolUsuario)));
             command.ExecuteNonQuery();
             connection.Close();
         }
@@ -49,6 +62,8 @@ public class UsuarioRepository: IUsuarioRepository
                     var usuario = new Usuario();
                     usuario.Id = Convert.ToInt32(reader["id"]);
                     usuario.NombreUsuario = reader["nombre_de_usuario"].ToString();
+                    usuario.Contrasenia = reader["contrasenia"].ToString();
+                    usuario.RolUsuario = (Rol) Convert.ToInt32(reader["rol"]);
                     usuarios.Add(usuario);
                 }
             }
@@ -72,6 +87,33 @@ public class UsuarioRepository: IUsuarioRepository
                 if(reader.Read()){
                     usuarioEncontrado.Id = Convert.ToInt32(reader["id"]);
                     usuarioEncontrado.NombreUsuario = reader["nombre_de_usuario"].ToString();
+                    usuarioEncontrado.Contrasenia = reader["contrasenia"].ToString();
+                    usuarioEncontrado.RolUsuario = (Rol) Convert.ToInt32(reader["rol"]);
+                }
+            }
+            connection.Close();
+        }
+
+        return usuarioEncontrado;
+    }
+
+    public Usuario GetUsuario(string nombre, string contrasenia){
+        Usuario usuarioEncontrado = new Usuario();
+        using(var connection = new SQLiteConnection(connectionString))
+        {
+            connection.Open();
+            string queryString = @"SELECT * FROM Usuario WHERE nombre_de_usuario = @nombreUsuario AND contrasenia = @contraseniaUsuario;";
+            
+            var command = new SQLiteCommand(queryString, connection);
+            command.Parameters.Add(new SQLiteParameter("@nombreUsuario", nombre));
+            command.Parameters.Add(new SQLiteParameter("@contraseniaUsuario", contrasenia));
+            using(var reader = command.ExecuteReader())
+            {
+                if(reader.Read()){
+                    usuarioEncontrado.Id = Convert.ToInt32(reader["id"]);
+                    usuarioEncontrado.NombreUsuario = reader["nombre_de_usuario"].ToString();
+                    usuarioEncontrado.Contrasenia = reader["contrasenia"].ToString();
+                    usuarioEncontrado.RolUsuario = (Rol) Convert.ToInt32(reader["rol"]);
                 }
             }
             connection.Close();
