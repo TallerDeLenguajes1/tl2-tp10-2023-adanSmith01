@@ -6,16 +6,16 @@
 
 <form asp-controller = "Usuario" asp-action="CrearUsuario" method="post" class="form-view">
     <section class="mb-3">
-        <label asp-for="@Model.Nombre" class="form-label"></label>
-        <input asp-for = "@Model.Nombre" placeholder = "Ej. usuario123" class="form-control">
+        <label asp-for="@Model.UsuarioNuevo.Nombre" class="form-label"></label>
+        <input asp-for = "@Model.UsuarioNuevo.Nombre" placeholder = "Ej. usuario123" class="form-control">
     </section>
     <section class="mb-3">
-        <label asp-for="@Model.Contrasenia" class="form-label"></label>
-        <input asp-for = "@Model.Contrasenia" type="password" class="form-control">
+        <label asp-for="@Model.UsuarioNuevo.Contrasenia" class="form-label"></label>
+        <input asp-for = "@Model.UsuarioNuevo.Contrasenia" type="password" class="form-control" required>
     </section>
     <section class="mb-3">
-        <label asp-for="@Model.RolUsuario" class="form-label"></label>
-        <select asp-for="@Model.RolUsuario" asp-items="@Html.GetEnumSelectList<Rol>()" class="form-select" aria-label="Default select example"></select>
+        <label asp-for="@Model.UsuarioNuevo.Rol" class="form-label"></label>
+        <select asp-for="@Model.UsuarioNuevo.Rol" asp-items="@Html.GetEnumSelectList<Rol>()" class="form-select" aria-label="Default select example"></select>
     </section>
     <input type="submit" class="btn btn-outline-success">
 </form>

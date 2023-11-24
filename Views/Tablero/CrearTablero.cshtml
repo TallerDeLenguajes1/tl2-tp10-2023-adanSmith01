@@ -1,4 +1,4 @@
-@model tl2_tp10_2023_adanSmith01.Models.Tablero
+@model tl2_tp10_2023_adanSmith01.ViewModels.CrearTableroViewModel
 
 @{ViewData["title"]="Crear tablero";}
 
@@ -6,16 +6,13 @@
 
 <form asp-controller = "Tablero" asp-action="CrearTablero" method="post" class="form-view">
     <section class="mb-3">
-        <label class="form-label">Nombre: </label>
-        <input asp-for = "@Model.Nombre" placeholder = "Ej. tablero-de-usuario" required class="form-control">
+        <label asp-for="@Model.TableroVM.Nombre" class="form-label"></label>
+        <input asp-for = "@Model.TableroVM.Nombre" placeholder = "Ej. tablero-de-usuario" required class="form-control">
     </section>
     <section class="mb-3">
-        <label class="form-label">Descripcion: </label>
-        <input asp-for = "@Model.Descripcion" class="form-control">
+        <label asp-for="@Model.TableroVM.Descripcion" class="form-label"></label>
+        <input asp-for = "@Model.TableroVM.Descripcion" class="form-control">
     </section>
-    <section hidden class="mb-3">
-        <label hidden>Id de usuario propietario: </label>
-        <input hidden asp-for="@Model.IdUsuarioPropietario" value="@ViewBag.IdUsuario">
-    </section>
+    <input hidden asp-for="@Model.TableroVM.IdUsuarioPropietario" value="@Model.IdUsuarioPropietario">
     <input type="submit" class="btn btn-outline-success" value="Confirmar">
 </form>

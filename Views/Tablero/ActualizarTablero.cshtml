@@ -1,19 +1,19 @@
-@model Tablero
+@model tl2_tp10_2023_adanSmith01.ViewModels.TableroViewModel
 
 @{ViewData["title"]="Actualizar tablero";}
 
 <h1 class="text-center">Actualizar tablero</h1>
 
 <form asp-controller = "Tablero" asp-action="ActualizarTablero" method="post" class="form-view">
+    <input hidden asp-for="@Model.Id" class="form-control">
     <section class="mb-3">
-        <label class="form-label">Nombre </label>
+        <label asp-for="@Model.Nombre" class="form-label"></label>
         <input asp-for = "@Model.Nombre" value="@Model.Nombre" class="form-control" required>
     </section>
     <section class="mb-3">
-        <label class="form-label">Descripcion </label>
+        <label asp-for="@Model.Descripcion" class="form-label"></label>
         <input asp-for = "@Model.Descripcion" value="@Model.Descripcion" class="form-control">
     </section>
-    <input hidden asp-for="@Model.Id" class="form-control">
     <input hidden asp-for="@Model.IdUsuarioPropietario" class="form-control">
     <input type="submit" class="btn btn-outline-success" value="Confirmar">
 </form>

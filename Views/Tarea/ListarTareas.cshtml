@@ -1,43 +1,44 @@
-@model List<Tarea>
+@model tl2_tp10_2023_adanSmith01.ViewModels.TareasTableroViewModel
 
 @{ViewData["title"]="Tareas del usuario";}
 
     <section class="content-view">
-        <h1 class="text-center">Tareas</h1>
+        <h1 class="text-center">Tareas del tablero @Model.NombreTablero</h1>
 
-        @if(Model.Count > 0){
+        @if(Model.TareasVM.Count > 0){
             <table class="table">
                 <thead>
                     <tr>
-                        <th hidden>Id tablero</th>
                         <th>Nombre</th>
                         <th>Descripcion</th>
                         <th>Color</th>
                         <th>Estado</th>
-                        <th>Id usuario asignado</th>
+                        <th>Usuario asignado</th>
                         <th colspan="2">Operaciones</th>
                     </tr>
                 </thead>
                 <tbody class="table-group-divider">
-                    @foreach(var tarea in Model)
+                    @foreach(var tareaVM in Model.TareasVM)
                     {
                         <tr>
-                            <td hidden>@tarea.IdTablero</td>
-                            <td>@tarea.Nombre</td>
-                            @if(String.IsNullOrEmpty(tarea.Descripcion)){
+                            <td>@tareaVM.Nombre</td>
+                            @if(String.IsNullOrEmpty(tareaVM.Descripcion)){
                                 <td>sin descripcion</td>
                             }else{
-                                <td>@tarea.Descripcion</td>
+                                <td>@tareaVM.Descripcion</td>
                             }
-                            <td style="background-color: @tarea.Color;"></td>
-                            <td>@tarea.Estado.ToString()</td>
-                            @if(tarea.IdUsuarioAsignado != null){
-                                <td>@tarea.IdUsuarioAsignado</td>
-                            }else{
-                                <td>N/A</td>
+                            <td style="background-color: @tareaVM.Color;"></td>
+                            <td>@tareaVM.Estado.ToString()</td>
+                            @{
+                                var usuarioAsignado = Model.UsuariosVM.FirstOrDefault(u => u.Id == tareaVM.Id);
+                                if(usuarioAsignado != null){
+                                    <td>@usuarioAsignado.Nombre</td>
+                                }else{
+                                    <td>N/A</td>
+                                }
                             }
                             <td>
-                                <a asp-controller="Tarea" asp-action="ActualizarTarea" asp-route-idTarea="@tarea.Id" class="btn btn-outline-info">Modificar tarea
+                                <a asp-controller="Tarea" asp-action="ActualizarTarea" asp-route-idTarea="@tareaVM.Id" class="btn btn-outline-info">Modificar tarea
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                     <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
@@ -45,7 +46,7 @@
                                 </a>
                             </td>
                             <td>
-                                <a asp-controller="Tarea" asp-action="EliminarTarea" asp-route-idTarea="@tarea.Id" class="btn btn-outline-danger" onclick="return confirm('¿Estas seguro de eliminar la tarea seleccionada?')">Eliminar tarea
+                                <a asp-controller="Tarea" asp-action="EliminarTarea" asp-route-idTarea="@tareaVM.Id" class="btn btn-outline-danger" onclick="return confirm('¿Estas seguro de eliminar la tarea seleccionada?')">Eliminar tarea
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
                                     <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>

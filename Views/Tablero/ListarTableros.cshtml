@@ -1,32 +1,34 @@
-@model List<Tablero>
+@model tl2_tp10_2023_adanSmith01.ViewModels.TablerosUsuarioViewModel
 
-@{ViewData["title"]="Mis tableros";}
+@{
+    ViewData["title"] = "Tableros";
+}
 
 <section>
-    <h1>Mis tableros</h1>
-    @if(Model.Count == 0)
+    @if(!String.IsNullOrEmpty(Model.NombrePropietario)){
+        <h1>Tableros de @Model.NombrePropietario</h1>
+    }else{
+        <h1>Mis tableros</h1>
+    }
+    @if(@Model.TablerosUsuario.Count == 0)
     {
         <p><strong>NO HAY TABLEROS ASOCIADOS AL USUARIO</strong></p>
     } else{
-        <a asp-controller="Tablero" asp-action="CrearTablero" asp-route-idUsuario="@Model[0].IdUsuarioPropietario" class="btn btn-outline-success btn-add">+ Añadir tablero</a>
+        <a asp-controller="Tablero" asp-action="CrearTablero" asp-route-idUsuario="@Model.TablerosUsuario[0].IdUsuarioPropietario" class="btn btn-outline-success btn-add">+ Añadir tablero</a>
         <table class="table">
             <thead>
                 <tr>
-                    <th hidden>Id</th>
-                    <th hidden>Id usuario propietario</th>
                     <th>Nombre</th>
                     <th>Descripcion</th>
                     <th colspan=4>Operaciones</th>
                 </tr>
             </thead>
             <tbody class="table-group-divider">
-                @foreach (var tablero in Model)
+                @foreach (var tablero in Model.TablerosUsuario)
                 {
                     <tr>
-                        <td hidden>@tablero.Id</td>
-                        <td hidden>@tablero.IdUsuarioPropietario</td>
                         <td>@tablero.Nombre</td>
-                        @if(String.IsNullOrEmpty(tablero.Nombre)){
+                        @if(String.IsNullOrEmpty(tablero.Descripcion)){
                             <td>Sin descripcion</td>
                         } else{
                             <td>@tablero.Descripcion</td>
@@ -51,7 +53,7 @@
                             </a>
                         </td>
                         <td>
-                            <a asp-controller="Tarea" asp-action="ListarTareasTablero" asp-route-idTablero = "@tablero.Id" class="btn btn-outline-dark">Ver tareas
+                            <a asp-controller="Tarea" asp-action="ListarTareas" asp-route-idTablero = "@tablero.Id" class="btn btn-outline-dark">Ver tareas
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                                 <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
                                 <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
