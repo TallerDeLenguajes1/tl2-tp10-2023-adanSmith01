@@ -19,17 +19,11 @@ public class Usuario
     public string Contrasenia { get => contrasenia; set => contrasenia = value; }
     public Rol RolUsuario { get => rolUsuario; set => rolUsuario = value; }
 
-    public Usuario(CrearUsuarioViewModel usuario){
+    public Usuario(UsuarioViewModel usuario){
+        this.id = usuario.Id;
         this.nombreUsuario = usuario.Nombre;
         this.contrasenia = usuario.Contrasenia;
-        this.rolUsuario = usuario.RolUsuario;
-    }
-
-    public Usuario(ActualizarUsuarioViewModel usuario){
-        this.id = usuario.IdUsuario;
-        this.nombreUsuario = usuario.Nombre;
-        this.contrasenia = usuario.Contrasenia;
-        this.rolUsuario = usuario.RolUsuario;
+        this.rolUsuario = usuario.Rol;
     }
 
 
