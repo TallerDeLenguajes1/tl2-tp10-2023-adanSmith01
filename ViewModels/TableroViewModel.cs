@@ -1,4 +1,5 @@
 namespace tl2_tp10_2023_adanSmith01.ViewModels;
+using System.ComponentModel.DataAnnotations;
 using tl2_tp10_2023_adanSmith01.Models;
 
 public class TableroViewModel
@@ -7,20 +8,25 @@ public class TableroViewModel
     private string nombre;
     private string descripcion;
     private int idUsuarioPropietario;
-    private string nombrePropietario;
-
-    public TableroViewModel(Tablero tablero, UsuarioViewModel usuarioVM){
-        this.Id = tablero.Id;
-        this.Nombre = tablero.Nombre;
-        this.Descripcion = tablero.Descripcion;
-        this.IdUsuarioPropietario = tablero.IdUsuarioPropietario;
-        this.NombrePropietario = usuarioVM.Nombre;
-    }
 
     public int Id { get => id; set => id = value; }
+
+    [Required(ErrorMessage = "Este campo es requerido")]
+    [Display(Name = "Nombre del tablero")]
     public string Nombre { get => nombre; set => nombre = value; }
+
+    [Display(Name = "Descripción del tablero")]
     public string Descripcion { get => descripcion; set => descripcion = value; }
     public int IdUsuarioPropietario { get => idUsuarioPropietario; set => idUsuarioPropietario = value; }
-    public string NombrePropietario { get => nombrePropietario; set => nombrePropietario = value; }
-}
 
+    public TableroViewModel(Tablero tablero){
+        this.id = tablero.Id;
+        this.nombre = tablero.Nombre;
+        this.descripcion = tablero.Descripcion;
+        this.idUsuarioPropietario = tablero.IdUsuarioPropietario;
+    }
+
+    public TableroViewModel(){
+        
+    }
+}

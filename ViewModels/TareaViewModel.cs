@@ -1,37 +1,47 @@
 namespace tl2_tp10_2023_adanSmith01.ViewModels;
+using System.ComponentModel.DataAnnotations;
 using tl2_tp10_2023_adanSmith01.Models;
 
 public class TareaViewModel
 {
     private int id;
+    private int idTablero;
     private string nombre;
     private string descripcion;
     private string color;
     private EstadoTarea estado;
-    private int idTablero;
-    private string nombreTablero;
-    private int? idUsuarioAsignado; 
-    private string nombreUsuarioAsignado;
-
-    public TareaViewModel(Tarea tarea, TableroViewModel tableroVM, UsuarioViewModel usuarioVM){
-        this.Id = tarea.Id;
-        this.nombre = tarea.Nombre;
-        this.Descripcion = tarea.Descripcion;
-        this.Color = tarea.Color;
-        this.Estado = tarea.Estado;
-        this.IdTablero = tableroVM.Id;
-        this.NombreTablero = tableroVM.Nombre;
-        this.IdUsuarioAsignado = usuarioVM.Id;
-        this.NombreUsuarioAsignado = usuarioVM.Nombre;
-    }
+    private int? idUsuarioAsignado;
 
     public int Id { get => id; set => id = value; }
-    public string Nombre { get => nombre; set => nombre = value; }
-    public string Descripcion { get => descripcion; set => descripcion = value; }
-    public string Color { get => color; set => color = value; }
-    public EstadoTarea Estado { get => estado; set => estado = value; }
     public int IdTablero { get => idTablero; set => idTablero = value; }
-    public string NombreTablero { get => nombreTablero; set => nombreTablero = value; }
+
+    [Required(ErrorMessage = "Este campo es requerido")]
+    [Display(Name = "Nombre de la tarea")]
+    public string Nombre { get => nombre; set => nombre = value; }
+
+    [Display(Name = "Descripción de la tarea")]
+    public string Descripcion { get => descripcion; set => descripcion = value; }
+
+    [Display(Name = "Color de la tarea")]
+    public string Color { get => color; set => color = value; }
+
+    [Display(Name = "Estado de la tarea")]
+    public EstadoTarea Estado { get => estado; set => estado = value; }
+
+    [Display(Name = "Usuario a asignar")]
     public int? IdUsuarioAsignado { get => idUsuarioAsignado; set => idUsuarioAsignado = value; }
-    public string NombreUsuarioAsignado { get => nombreUsuarioAsignado; set => nombreUsuarioAsignado = value; }
+
+    public TareaViewModel(Tarea tarea){
+        this.id = tarea.Id;
+        this.idTablero = tarea.IdTablero;
+        this.nombre = tarea.Nombre;
+        this.descripcion = tarea.Descripcion;
+        this.color = tarea.Color;
+        this.estado = tarea.Estado;
+        this.idUsuarioAsignado = tarea.IdUsuarioAsignado;
+    }
+
+    public TareaViewModel(){
+
+    }
 }
