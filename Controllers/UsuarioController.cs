@@ -37,21 +37,21 @@ public class UsuarioController : Controller
         if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario")) && (HttpContext.Session.GetString("rol")) == Rol.Administrador.ToString()){
             var usuario = usuarioRepo.GetUsuario(idUsuario);
             if(!String.IsNullOrEmpty(usuario.NombreUsuario)){
-                return View(new ActualizarUsuarioViewModel(usuario));
+                return View(new UsuarioViewModel(usuario));
             }// En caso contrario, se muestra un 404 Not Found
         }
         return RedirectToRoute(new {controller = "Logueo", action="Index"});
     }
 
     [HttpPost]
-    public IActionResult CrearUsuario(CrearUsuarioViewModel nuevoUsuario){
-        var nuevo = new Usuario(nuevoUsuario);
+    public IActionResult CrearUsuario(CrearUsuarioViewModel usuario){
+        var nuevo = new Usuario(usuario.UsuarioNuevo);
         usuarioRepo.CrearUsuario(nuevo);
         return RedirectToAction("Index");
     }
 
     [HttpPost]
-    public IActionResult ActualizarUsuario(ActualizarUsuarioViewModel usuario){
+    public IActionResult ActualizarUsuario(UsuarioViewModel usuario){
         var usuarioAModificar = new Usuario(usuario);
         usuarioRepo.ModificarUsuario(usuarioAModificar);
         return RedirectToAction("Index");
