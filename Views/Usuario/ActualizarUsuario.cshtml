@@ -13,14 +13,19 @@
                 <section class="mb-3">
                     <label asp-for="@Model.Nombre" class="form-label"></label>
                     <input asp-for="@Model.Nombre" value="@Model.Nombre" class="form-control">
+                    <span asp-validation-for="@Model.Nombre" class="text-danger"></span>
                 </section>
                 <section class="mb-3">
                     <label asp-for="@Model.Contrasenia" class="form-label"></label>
                     <input asp-for="@Model.Contrasenia" type="password" class="form-control">
+                    <span asp-validation-for="@Model.Contrasenia" class="text-danger"></span>
                 </section>
                 <section class="mb-3">
                     <label asp-for="@Model.Rol"></label>
-                    <select asp-for="@Model.Rol" asp-items="@Html.GetEnumSelectList<Rol>()" class="form-select" aria-label="Default select example"></select>
+                    <select asp-for="@Model.Rol" asp-items="@Html.GetEnumSelectList<Rol>()" class="form-select" aria-label="Default select example">
+                        <option value="">-Seleccione rol-</option>
+                    </select>
+                    <span asp-validation-for="@Model.Rol" class="text-danger"></span>
                 </section>
                 <input hidden asp-for="@Model.Id" value="@Model.Id">
                 <input type="submit" class="btn btn-outline-success">
@@ -28,3 +33,4 @@
         }
     </article>
 </section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

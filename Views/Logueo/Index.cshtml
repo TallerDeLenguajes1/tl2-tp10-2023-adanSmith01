@@ -6,10 +6,12 @@
         <section class="mb-3">
             <label asp-for="@Model.NombreUsuario" class="form-label"></label>
             <input asp-for="@Model.NombreUsuario" class="form-control">
+            <span asp-validation-for="@Model.NombreUsuario" class="text-danger"></span>
         </section>
         <section class="mb-3">
             <label asp-for="@Model.ContraseniaUsuario" class="form-label"></label>
             <input asp-for="@Model.ContraseniaUsuario" type="password" class="form-control">
+            <span asp-validation-for="@Model.ContraseniaUsuario" class="text-danger"></span>
         </section>
         <input type="submit" value="Entrar" class="btn btn-outline-info">
     </form>
