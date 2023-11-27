@@ -12,9 +12,11 @@ public class TableroViewModel
     public int Id { get => id; set => id = value; }
 
     [Required(ErrorMessage = "Este campo es requerido")]
+    //[MaxLength(30, ErrorMessage = "Solo hasta 30 caracteres")]
     [Display(Name = "Nombre del tablero")]
     public string Nombre { get => nombre; set => nombre = value; }
 
+    //[MaxLength(200, ErrorMessage = "Solo hasta 200 caracteres")]
     [Display(Name = "Descripción del tablero")]
     public string Descripcion { get => descripcion; set => descripcion = value; }
     public int IdUsuarioPropietario { get => idUsuarioPropietario; set => idUsuarioPropietario = value; }
