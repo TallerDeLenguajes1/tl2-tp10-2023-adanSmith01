@@ -81,7 +81,9 @@ public class TableroController: Controller
             if(nuevo.IdUsuarioPropietario == Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTableros", null);
             return RedirectToAction("ListarTableros", new{idUsuario = nuevoTablero.IdUsuarioPropietario});
         }
-        return RedirectToRoute(new{controller = "Logueo", action="Index"});
+        if(nuevo.IdUsuarioPropietario == Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("CrearTablero", null);
+        return RedirectToAction("CrearTablero", new{idUsuario = nuevo.IdUsuarioPropietario});
+        //return RedirectToRoute(new{controller="Logueo", action="Index"});
     }
 
     [HttpPost]
