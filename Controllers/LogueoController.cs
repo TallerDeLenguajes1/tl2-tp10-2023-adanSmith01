@@ -23,11 +23,15 @@ public class LogueoController: Controller
 
     [HttpPost]
     public IActionResult ProcesoLogueo(LogueoViewModel logueoUsuario){
-        var usuarioLogueado = usuarioRepo.GetUsuario(logueoUsuario.NombreUsuario, logueoUsuario.ContraseniaUsuario);
-        if(!String.IsNullOrEmpty(usuarioLogueado.NombreUsuario)){
-            LoguearUsuario(usuarioLogueado);
-            if(HttpContext.Session.GetString("rol") == Rol.Administrador.ToString()) return RedirectToRoute(new {controller = "Usuario", action = "Index"});
-            else return RedirectToRoute(new {controller = "Tablero", action="MisTableros"});
+        if(ModelState.IsValid){
+            var usuarioLogueado = usuarioRepo.GetUsuario(logueoUsuario.NombreUsuario, logueoUsuario.ContraseniaUsuario);
+            if(!String.IsNullOrEmpty(usuarioLogueado.NombreUsuario)){
+                LoguearUsuario(usuarioLogueado);
+                if(HttpContext.Session.GetString("rol") == Rol.Administrador.ToString()) return RedirectToRoute(new {controller = "Usuario", action = "Index"});
+                else return RedirectToRoute(new {controller = "Tablero", action="ListarTableros"});
+            }else{
+                return RedirectToAction("Index");
+            }
         }else{
             return RedirectToAction("Index");
         }

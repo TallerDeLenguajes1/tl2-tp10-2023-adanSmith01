@@ -46,23 +46,23 @@ public class TableroController: Controller
                 return RedirectToRoute(new {controller = "Logueo", action="Index"});//Debe retornar un 404
             }
         }else{
-            return RedirectToRoute(new {controller = "Logueo", action="Index"});//Debe retornar un 404
+            return RedirectToRoute(new {controller = "Logueo", action="Index"});
         }
     }
 
     [HttpGet]
-    public IActionResult ListarTableros(int? idUsuario = null){
+    public IActionResult ListarTableros(int? idUsuario){
         if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))){
             List<Tablero> tableros = new List<Tablero>();
             if(idUsuario == null){
                 tableros = tableroRepo.GetTablerosDeUsuario(Convert.ToInt32(HttpContext.Session.GetString("id")));
-                return View(new TablerosUsuarioViewModel(tableros, HttpContext.Session.GetString("usuario")));
+                return View(new TablerosUsuarioViewModel(tableros, new UsuarioViewModel(), false));
             }else{
                 var usuario = usuarioRepo.GetUsuario((int)idUsuario);
                 if(!String.IsNullOrEmpty(usuario.NombreUsuario)){
                     var usuarioVM = new UsuarioViewModel(usuario);
                     tableros = tableroRepo.GetTablerosDeUsuario((int)idUsuario);
-                    return View(new TablerosUsuarioViewModel(tableros, usuarioVM.Nombre));
+                    return View(new TablerosUsuarioViewModel(tableros, usuarioVM, true));
                 }else{
                     return RedirectToRoute(new {controller = "Logueo", action="Index"}); // Puede redireccionar a un 404
                 }
@@ -75,16 +75,23 @@ public class TableroController: Controller
 
     [HttpPost]
     public IActionResult CrearTablero(CrearTableroViewModel nuevo){
-        var nuevoTablero = new Tablero(nuevo.TableroVM);
-        tableroRepo.CrearTablero(nuevoTablero);
-        return RedirectToAction("ListarTableros", new{idUsuario = nuevoTablero.IdUsuarioPropietario});
+        if(ModelState.IsValid){
+            var nuevoTablero = new Tablero(nuevo.TableroVM);
+            tableroRepo.CrearTablero(nuevoTablero);
+            if(nuevo.IdUsuarioPropietario == Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTableros", null);
+            return RedirectToAction("ListarTableros", new{idUsuario = nuevoTablero.IdUsuarioPropietario});
+        }
+        return RedirectToRoute(new{controller = "Logueo", action="Index"});
     }
 
     [HttpPost]
     public IActionResult ActualizarTablero(TableroViewModel tableroAModificar){
-        var tableroActualizado = new Tablero(tableroAModificar);
-        tableroRepo.ModificarTablero(tableroActualizado);
-        return RedirectToAction("ListarTableros", new{idUsuario = tableroActualizado.IdUsuarioPropietario});
+        if(ModelState.IsValid){
+            var tableroActualizado = new Tablero(tableroAModificar);
+            tableroRepo.ModificarTablero(tableroActualizado);
+            return RedirectToAction("ListarTableros", new{idUsuario = tableroActualizado.IdUsuarioPropietario});
+        }
+        return RedirectToRoute(new{controller="Logueo", action="Index"});
     }
 
     public IActionResult EliminarTablero(int idTablero){

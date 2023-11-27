@@ -18,7 +18,7 @@ public class UsuarioController : Controller
 
     [HttpGet]
     public IActionResult Index(){
-        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario")) && (HttpContext.Session.GetString("rol")) == "Administrador"){
+        if(!String.IsNullOrEmpty(HttpContext.Session.GetString("usuario")) && (HttpContext.Session.GetString("rol")) == Rol.Administrador.ToString()){
             var usuarios = usuarioRepo.GetAllUsuarios();
             return View(new IndexUsuariosViewModel(usuarios));
         }else{
@@ -45,16 +45,24 @@ public class UsuarioController : Controller
 
     [HttpPost]
     public IActionResult CrearUsuario(CrearUsuarioViewModel usuario){
-        var nuevo = new Usuario(usuario.UsuarioNuevo);
-        usuarioRepo.CrearUsuario(nuevo);
-        return RedirectToAction("Index");
+        if(ModelState.IsValid){
+            var nuevo = new Usuario(usuario.UsuarioNuevo);
+            usuarioRepo.CrearUsuario(nuevo);
+            return RedirectToAction("Index");
+        }else{
+            return RedirectToAction("CrearUsuario");
+        }
     }
 
     [HttpPost]
     public IActionResult ActualizarUsuario(UsuarioViewModel usuario){
-        var usuarioAModificar = new Usuario(usuario);
-        usuarioRepo.ModificarUsuario(usuarioAModificar);
-        return RedirectToAction("Index");
+        if(ModelState.IsValid){
+            var usuarioAModificar = new Usuario(usuario);
+            usuarioRepo.ModificarUsuario(usuarioAModificar);
+            return RedirectToAction("Index");
+        }else{
+            return RedirectToAction("ActualizarUsuario", new{idUsuario = usuario.Id});
+        }
     }
 
     public IActionResult DarBaja(int idUsuario){
