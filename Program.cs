@@ -1,9 +1,11 @@
+using tl2_tp10_2023_adanSmith01.Repository;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
-
+//builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromSeconds(300);
