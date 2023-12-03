@@ -8,12 +8,12 @@ namespace tl2_tp10_2023_adanSmith01.Controllers;
 public class LogueoController: Controller
 {
     private readonly ILogger<LogueoController> _logger;
-    private IUsuarioRepository usuarioRepo;
+    private readonly IUsuarioRepository _usuariosRepo;
 
-    public LogueoController(ILogger<LogueoController> logger)
+    public LogueoController(ILogger<LogueoController> logger, IUsuarioRepository usuariosRepo)
     {
         _logger = logger;
-        usuarioRepo = new UsuarioRepository();
+        _usuariosRepo = usuariosRepo;
     }
 
     [HttpGet]
@@ -23,18 +23,11 @@ public class LogueoController: Controller
 
     [HttpPost]
     public IActionResult ProcesoLogueo(LogueoViewModel logueoUsuario){
-        if(ModelState.IsValid){
-            var usuarioLogueado = usuarioRepo.GetUsuario(logueoUsuario.NombreUsuario, logueoUsuario.ContraseniaUsuario);
-            if(!String.IsNullOrEmpty(usuarioLogueado.NombreUsuario)){
-                LoguearUsuario(usuarioLogueado);
-                if(HttpContext.Session.GetString("rol") == Rol.Administrador.ToString()) return RedirectToRoute(new {controller = "Usuario", action = "Index"});
-                else return RedirectToRoute(new {controller = "Tablero", action="ListarTableros"});
-            }else{
-                return RedirectToAction("Index");
-            }
-        }else{
-            return RedirectToAction("Index");
-        }
+        if(!ModelState.IsValid) return RedirectToAction("Index");
+
+        var usuarioLogueado = _usuariosRepo.GetUsuario(logueoUsuario.NombreUsuario, logueoUsuario.ContraseniaUsuario);
+        LoguearUsuario(usuarioLogueado);
+        return RedirectToRoute(new {controller = "Tablero", action = "ListarTableros"});
     }
 
     private void LoguearUsuario(Usuario usuario){
