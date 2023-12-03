@@ -1,42 +1,47 @@
-@model tl2_tp10_2023_adanSmith01.ViewModels.CrearTareaViewModel
+@model tl2_tp10_2023_adanSmith01.ViewModels.TareaTableroUsuariosViewModel
 
 @{ViewData["title"]="Crear tarea";}
 
 <section>
     <h1 class="text-center">Crear tarea</h1>
-    <form asp-controller="Tarea" asp-action="CrearTarea" asp-route-idTablero="@ViewBag.IdTablero" method="post" class="form-view" onsubmit="getColor()">
+    <form asp-controller="Tarea" asp-action="CrearTarea" asp-route-idTablero="@Model.IdTablero" method="post" class="form-view" onsubmit="getColor()">
         <section class="mb-3">
-            <label asp-for="@Model.TareaVM.Nombre" class="form-label"></label>
-            <input asp-for="@Model.TareaVM.Nombre" class="form-control" required>
+            <label asp-for="@Model.Tarea.Nombre" class="form-label"></label>
+            <input asp-for="@Model.Tarea.Nombre" class="form-control">
+            <span asp-validation-for="@Model.Tarea.Nombre" class="text-danger"></span>
         </section>
         <section class="mb-3">
-            <label asp-for="@Model.TareaVM.Descripcion" class="form-label"></label>
-            <input asp-for="@Model.TareaVM.Descripcion" class="form-control">
+            <label asp-for="@Model.Tarea.Descripcion" class="form-label"></label>
+            <input asp-for="@Model.Tarea.Descripcion" class="form-control">
         </section>
         <section class="mb-3">
-            <label asp-for="@Model.TareaVM.Color" class="form-label"></label>
+            <label asp-for="@Model.Tarea.Color" class="form-label"></label>
             <input type="color" id="colorTarea" class="form-control">
-            <input hidden asp-for="@Model.TareaVM.Color" id="Color">
+            <input hidden asp-for="@Model.Tarea.Color" id="Color">
+            <span asp-validation-for="@Model.Tarea.Color" class="text-danger"></span>
         </section>
         <section class="mb-3">
-            <label asp-for="@Model.TareaVM.Estado" class="form-label"></label>
-            <select asp-for="@Model.TareaVM.Estado" asp-items="@Html.GetEnumSelectList<EstadoTarea>()" class="form-select" aria-label="Default select example">
+            <label asp-for="@Model.Tarea.Estado" class="form-label"></label>
+            <select asp-for="@Model.Tarea.Estado" asp-items="@Html.GetEnumSelectList<EstadoTarea>()" class="form-select" aria-label="Default select example">
+                <option value="">-Seleccione-</option>
             </select>
+            <span asp-validation-for="@Model.Tarea.Estado" class="text-danger"></span>
         </section>
         <section class="mb-3">
-            <label asp-for="@Model.TareaVM.IdUsuarioAsignado" class="form-label">Asignar usuario</label>
-            <select asp-for="@Model.TareaVM.IdUsuarioAsignado" class="form-select">
+            <label asp-for="@Model.Tarea.IdUsuarioAsignado" class="form-label">Asignar usuario</label>
+            <select asp-for="@Model.Tarea.IdUsuarioAsignado" class="form-select">
                 <option value="">Ninguno</option>
                 @foreach(var usuario in Model.Usuarios){
                     <option value="@usuario.Id">@usuario.Nombre</option>
                 }
             </select>
         </section>
-        <input hidden asp-for="@Model.TareaVM.IdTablero" value="@Model.IdTablero">
         <input hidden asp-for="@Model.IdTablero">
         <input hidden asp-for="@Model.Usuarios">
         <input type="submit" value="Confirmar" class="btn btn-outline-success">
     </form>
 </section>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
 
 <script src="../js/site.js"></script>
