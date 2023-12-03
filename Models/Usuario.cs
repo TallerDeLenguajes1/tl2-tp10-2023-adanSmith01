@@ -14,6 +14,7 @@ public class Usuario
     private string nombreUsuario;
     private string contrasenia;
     private Rol rolUsuario;
+    
     public int Id { get => id; set => id = value; }
     public string NombreUsuario { get => nombreUsuario; set => nombreUsuario = value; }
     public string Contrasenia { get => contrasenia; set => contrasenia = value; }
@@ -26,8 +27,5 @@ public class Usuario
         this.rolUsuario = usuario.Rol;
     }
 
-
-    public Usuario(){
-        
-    }
+    public Usuario(){}
 }
