@@ -60,11 +60,13 @@ public class TableroRepository: ITableroRepository
             using(var reader = command.ExecuteReader())
             {
                 while(reader.Read()){
-                    Tablero tablero = new Tablero();
-                    tablero.Id = Convert.ToInt32(reader["id"]);
-                    tablero.IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]);
-                    tablero.Nombre = reader["nombre"].ToString();
-                    tablero.Descripcion = reader["descripcion"].ToString();
+                    Tablero tablero = new Tablero
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]),
+                        Nombre = reader["nombre"].ToString(),
+                        Descripcion = reader["descripcion"].ToString()
+                    };
                     tableros.Add(tablero); 
                 }
             }
@@ -75,8 +77,8 @@ public class TableroRepository: ITableroRepository
         return tableros;
     }
 
-    public Tablero GetTablero(int idTablero){
-        Tablero tableroEncontrado = new Tablero();
+    public Tablero? GetTablero(int idTablero){
+        Tablero tableroEncontrado = null;
         using(var connection = new SQLiteConnection(connectionString))
         {
             connection.Open();
@@ -87,10 +89,13 @@ public class TableroRepository: ITableroRepository
             using(var reader = command.ExecuteReader())
             {
                 if(reader.Read()){
-                    tableroEncontrado.Id = Convert.ToInt32(reader["id"]);
-                    tableroEncontrado.IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]);
-                    tableroEncontrado.Nombre = reader["nombre"].ToString();
-                    tableroEncontrado.Descripcion = reader["descripcion"].ToString();
+                    tableroEncontrado = new Tablero
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]),
+                        Nombre = reader["nombre"].ToString(),
+                        Descripcion = reader["descripcion"].ToString()
+                    };
                 }
             }
             connection.Close();
@@ -112,11 +117,13 @@ public class TableroRepository: ITableroRepository
             using(var reader = command.ExecuteReader())
             {
                 while(reader.Read()){
-                    Tablero tablero = new Tablero();
-                    tablero.Id = Convert.ToInt32(reader["id"]);
-                    tablero.IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]);
-                    tablero.Nombre = reader["nombre"].ToString();
-                    tablero.Descripcion = reader["descripcion"].ToString();
+                    Tablero tablero = new Tablero
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]),
+                        Nombre = reader["nombre"].ToString(),
+                        Descripcion = reader["descripcion"].ToString()
+                    };
                     tablerosUsuario.Add(tablero); 
                 }
             }

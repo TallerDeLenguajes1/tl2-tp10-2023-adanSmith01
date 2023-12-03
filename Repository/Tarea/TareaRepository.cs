@@ -68,8 +68,8 @@ public class TareaRepository: ITareaRepository
         }
     }
 
-    public Tarea GetTarea(int idTarea){
-        Tarea tareaEncontrada = new Tarea();
+    public Tarea? GetTarea(int idTarea){
+        Tarea tareaEncontrada = null;
         using(var connection = new SQLiteConnection(connectionString))
         {
             connection.Open();
@@ -80,13 +80,16 @@ public class TareaRepository: ITareaRepository
             using(var reader = command.ExecuteReader())
             {
                 if(reader.Read()){
-                    tareaEncontrada.Id = Convert.ToInt32(reader["id"]);
-                    tareaEncontrada.IdTablero = Convert.ToInt32(reader["id_tablero"]);
-                    tareaEncontrada.Nombre = reader["nombre"].ToString();
-                    tareaEncontrada.Estado = (EstadoTarea) Convert.ToInt32(reader["estado"]);
-                    tareaEncontrada.Descripcion = reader["descripcion"].ToString();
-                    tareaEncontrada.Color = reader["color"].ToString();
-                    tareaEncontrada.IdUsuarioAsignado = reader["id_usuario_asignado"] as int?;
+                    tareaEncontrada = new Tarea
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        IdTablero = Convert.ToInt32(reader["id_tablero"]),
+                        Nombre = reader["nombre"].ToString(),
+                        Estado = (EstadoTarea)Convert.ToInt32(reader["estado"]),
+                        Descripcion = reader["descripcion"].ToString(),
+                        Color = reader["color"].ToString(),
+                        IdUsuarioAsignado = (reader["id_usuario_asignado"] == DBNull.Value) ? (int?)null : Convert.ToInt32(reader["id_usuario_asignado"])
+                    };
                 }
             }
 
@@ -108,14 +111,16 @@ public class TareaRepository: ITareaRepository
             using(var reader = command.ExecuteReader())
             {
                 while(reader.Read()){
-                    Tarea tarea = new Tarea();
-                    tarea.Id = Convert.ToInt32(reader["id"]);
-                    tarea.IdTablero = Convert.ToInt32(reader["id_tablero"]);
-                    tarea.Nombre = reader["nombre"].ToString();
-                    tarea.Estado = (EstadoTarea) Convert.ToInt32(reader["estado"]);
-                    tarea.Descripcion = reader["descripcion"].ToString();
-                    tarea.Color = reader["color"].ToString();
-                    tarea.IdUsuarioAsignado = reader["id_usuario_asignado"] as int?; 
+                    Tarea tarea = new Tarea
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        IdTablero = Convert.ToInt32(reader["id_tablero"]),
+                        Nombre = reader["nombre"].ToString(),
+                        Estado = (EstadoTarea)Convert.ToInt32(reader["estado"]),
+                        Descripcion = reader["descripcion"].ToString(),
+                        Color = reader["color"].ToString(),
+                        IdUsuarioAsignado = (reader["id_usuario_asignado"] == DBNull.Value) ? (int?)null : Convert.ToInt32(reader["id_usuario_asignado"])
+                    };
                     tareasUsuario.Add(tarea);
                 }
             }
@@ -130,21 +135,23 @@ public class TareaRepository: ITareaRepository
         using(var connection = new SQLiteConnection(connectionString))
         {
             connection.Open();
-            string queryString = @"SELECT * FROM Tarea WHERE id_tablero = @idTablero";
+            string queryString = @"SELECT * FROM Tarea WHERE id_tablero = @idTablero;";
             var command = new SQLiteCommand(queryString, connection);
             command.Parameters.Add(new SQLiteParameter("@idTablero", idTablero));
 
             using(var reader = command.ExecuteReader())
             {
                 while(reader.Read()){
-                    Tarea tarea = new Tarea();
-                    tarea.Id = Convert.ToInt32(reader["id"]);
-                    tarea.IdTablero = Convert.ToInt32(reader["id_tablero"]);
-                    tarea.Nombre = reader["nombre"].ToString();
-                    tarea.Estado = (EstadoTarea) Convert.ToInt32(reader["estado"]);
-                    tarea.Descripcion = reader["descripcion"].ToString();
-                    tarea.Color = reader["color"].ToString();
-                    tarea.IdUsuarioAsignado = reader["id_usuario_asignado"] as int?; 
+                    Tarea tarea = new Tarea
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        IdTablero = Convert.ToInt32(reader["id_tablero"]),
+                        Nombre = reader["nombre"].ToString(),
+                        Estado = (EstadoTarea)Convert.ToInt32(reader["estado"]),
+                        Descripcion = reader["descripcion"].ToString(),
+                        Color = reader["color"].ToString(),
+                        IdUsuarioAsignado = (reader["id_usuario_asignado"] == DBNull.Value) ? (int?)null : Convert.ToInt32(reader["id_usuario_asignado"])
+                    };
                     tareasTablero.Add(tarea);
                 }
             }
@@ -167,14 +174,16 @@ public class TareaRepository: ITareaRepository
             using(var reader = command.ExecuteReader())
             {
                 while(reader.Read()){
-                    Tarea tarea = new Tarea();
-                    tarea.Id = Convert.ToInt32(reader["id"]);
-                    tarea.IdTablero = Convert.ToInt32(reader["id_tablero"]);
-                    tarea.Nombre = reader["nombre"].ToString();
-                    tarea.Estado = (EstadoTarea) Convert.ToInt32(reader["estado"]);
-                    tarea.Descripcion = reader["descripcion"].ToString();
-                    tarea.Color = reader["color"].ToString();
-                    tarea.IdUsuarioAsignado = reader["id_usuario_asignado"] as int?; 
+                    Tarea tarea = new Tarea
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        IdTablero = Convert.ToInt32(reader["id_tablero"]),
+                        Nombre = reader["nombre"].ToString(),
+                        Estado = (EstadoTarea)Convert.ToInt32(reader["estado"]),
+                        Descripcion = reader["descripcion"].ToString(),
+                        Color = reader["color"].ToString(),
+                        IdUsuarioAsignado = (reader["id_usuario_asignado"] == DBNull.Value) ? (int?)null : Convert.ToInt32(reader["id_usuario_asignado"])
+                    };
                     tareasEstado.Add(tarea);
                 }
             }

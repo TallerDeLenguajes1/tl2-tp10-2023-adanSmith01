@@ -73,8 +73,8 @@ public class UsuarioRepository: IUsuarioRepository
         return usuarios;
     }
 
-    public Usuario GetUsuario(int idUsuario){
-        Usuario usuarioEncontrado = new Usuario();
+    public Usuario? GetUsuario(int idUsuario){
+        Usuario usuarioEncontrado = null;
         using(var connection = new SQLiteConnection(connectionString))
         {
             connection.Open();
@@ -85,10 +85,13 @@ public class UsuarioRepository: IUsuarioRepository
             using(var reader = command.ExecuteReader())
             {
                 if(reader.Read()){
-                    usuarioEncontrado.Id = Convert.ToInt32(reader["id"]);
-                    usuarioEncontrado.NombreUsuario = reader["nombre_de_usuario"].ToString();
-                    usuarioEncontrado.Contrasenia = reader["contrasenia"].ToString();
-                    usuarioEncontrado.RolUsuario = (Rol) Convert.ToInt32(reader["rol"]);
+                    usuarioEncontrado = new Usuario
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        NombreUsuario = reader["nombre_de_usuario"].ToString(),
+                        Contrasenia = reader["contrasenia"].ToString(),
+                        RolUsuario = (Rol)Convert.ToInt32(reader["rol"])
+                    };
                 }
             }
             connection.Close();
@@ -97,8 +100,8 @@ public class UsuarioRepository: IUsuarioRepository
         return usuarioEncontrado;
     }
 
-    public Usuario GetUsuario(string nombre, string contrasenia){
-        Usuario usuarioEncontrado = new Usuario();
+    public Usuario? GetUsuario(string nombre, string contrasenia){
+        Usuario usuarioEncontrado = null;
         using(var connection = new SQLiteConnection(connectionString))
         {
             connection.Open();
@@ -110,10 +113,13 @@ public class UsuarioRepository: IUsuarioRepository
             using(var reader = command.ExecuteReader())
             {
                 if(reader.Read()){
-                    usuarioEncontrado.Id = Convert.ToInt32(reader["id"]);
-                    usuarioEncontrado.NombreUsuario = reader["nombre_de_usuario"].ToString();
-                    usuarioEncontrado.Contrasenia = reader["contrasenia"].ToString();
-                    usuarioEncontrado.RolUsuario = (Rol) Convert.ToInt32(reader["rol"]);
+                    usuarioEncontrado = new Usuario
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        NombreUsuario = reader["nombre_de_usuario"].ToString(),
+                        Contrasenia = reader["contrasenia"].ToString(),
+                        RolUsuario = (Rol)Convert.ToInt32(reader["rol"])
+                    };
                 }
             }
             connection.Close();
