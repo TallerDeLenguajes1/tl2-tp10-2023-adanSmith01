@@ -25,6 +25,7 @@ public class TareaViewModel
     [Display(Name = "Color de la tarea")]
     public string Color { get => color; set => color = value; }
 
+    [Required(ErrorMessage = "No puede haber tarea sin estado")]
     [Display(Name = "Estado de la tarea")]
     public EstadoTarea Estado { get => estado; set => estado = value; }
 
