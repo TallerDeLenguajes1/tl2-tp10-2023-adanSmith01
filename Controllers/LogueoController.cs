@@ -23,11 +23,24 @@ public class LogueoController: Controller
 
     [HttpPost]
     public IActionResult ProcesoLogueo(LogueoViewModel logueoUsuario){
-        if(!ModelState.IsValid) return RedirectToAction("Index");
+        try
+        {
+            if(!ModelState.IsValid) return RedirectToAction("Index");
 
-        var usuarioLogueado = _usuariosRepo.GetUsuario(logueoUsuario.NombreUsuario, logueoUsuario.ContraseniaUsuario);
-        LoguearUsuario(usuarioLogueado);
-        return RedirectToRoute(new {controller = "Tablero", action = "ListarTableros"});
+            var usuarioLogueado = _usuariosRepo.GetUsuario(logueoUsuario.NombreUsuario, logueoUsuario.ContraseniaUsuario);
+
+            LoguearUsuario(usuarioLogueado);
+
+            _logger.LogInformation($"El usuario {usuarioLogueado.NombreUsuario} ingreso correctamente");
+
+            return RedirectToRoute(new {controller = "Tablero", action = "ListarTableros"});
+
+        }catch(Exception ex)
+        {
+            _logger.LogWarning($"Error: {ex} Intento de acceso invalido - Usuario: {logueoUsuario.NombreUsuario} - Clave ingresada: {logueoUsuario.ContraseniaUsuario}");
+            
+            return RedirectToAction("Index");
+        }
     }
 
     private void LoguearUsuario(Usuario usuario){

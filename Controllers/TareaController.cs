@@ -8,9 +8,9 @@ namespace tl2_tp10_2023_adanSmith01.Controllers;
 public class TareaController : Controller
 {
     private readonly ILogger<TareaController> _logger;
-    private ITareaRepository _tareasRepo;
-    private ITableroRepository _tablerosRepo;
-    private IUsuarioRepository _usuariosRepo;
+    private readonly ITareaRepository _tareasRepo;
+    private readonly ITableroRepository _tablerosRepo;
+    private readonly IUsuarioRepository _usuariosRepo;
 
     public TareaController(ILogger<TareaController> logger, ITableroRepository tablerosRepo, IUsuarioRepository usuariosRepo, ITareaRepository tareasRepo)
     {

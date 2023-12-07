@@ -8,8 +8,8 @@ namespace tl2_tp10_2023_adanSmith01.Controllers;
 public class TableroController: Controller
 {
     private readonly ILogger<TableroController> _logger;
-    private ITableroRepository _tablerosRepo;
-    private IUsuarioRepository _usuariosRepo;
+    private readonly ITableroRepository _tablerosRepo;
+    private readonly IUsuarioRepository _usuariosRepo;
 
     public TableroController(ILogger<TableroController> logger, ITableroRepository tablerosRepo, IUsuarioRepository usuariosRepo)
     {

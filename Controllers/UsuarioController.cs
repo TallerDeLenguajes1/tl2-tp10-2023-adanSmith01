@@ -8,12 +8,12 @@ namespace tl2_tp10_2023_adanSmith01.Controllers;
 public class UsuarioController : Controller
 {
     private readonly ILogger<UsuarioController> _logger;
-    private IUsuarioRepository usuariosRepo;
+    private readonly IUsuarioRepository _usuariosRepo;
 
-    public UsuarioController(ILogger<UsuarioController> logger)
+    public UsuarioController(ILogger<UsuarioController> logger, IUsuarioRepository usuariosRepo)
     {
         _logger = logger;
-        usuariosRepo = new UsuarioRepository();
+        _usuariosRepo = usuariosRepo;
     }
 
     [HttpGet]
@@ -21,7 +21,7 @@ public class UsuarioController : Controller
         if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
-        var usuarios = usuariosRepo.GetAllUsuarios();
+        var usuarios = _usuariosRepo.GetAllUsuarios();
         return View(new IndexUsuariosViewModel(usuarios));
     }
 
@@ -40,7 +40,7 @@ public class UsuarioController : Controller
         if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
 
-        var usuario = usuariosRepo.GetUsuario(idUsuario);
+        var usuario = _usuariosRepo.GetUsuario(idUsuario);
         return View(new UsuarioViewModel(usuario));
     }
 
@@ -52,7 +52,7 @@ public class UsuarioController : Controller
 
 
         var nuevo = new Usuario(usuario.UsuarioNuevo);
-        usuariosRepo.CrearUsuario(nuevo);
+        _usuariosRepo.CrearUsuario(nuevo);
         return RedirectToAction("Index");
     }
 
@@ -64,7 +64,7 @@ public class UsuarioController : Controller
 
 
         var usuarioAModificar = new Usuario(usuario);
-        usuariosRepo.ModificarUsuario(usuarioAModificar);
+        _usuariosRepo.ModificarUsuario(usuarioAModificar);
         return RedirectToAction("Index");
     }
 
@@ -72,7 +72,7 @@ public class UsuarioController : Controller
         if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
-        usuariosRepo.EliminarUsuario(idUsuario);
+        _usuariosRepo.EliminarUsuario(idUsuario);
         return RedirectToAction("Index");
     }
 }
