@@ -4,80 +4,108 @@ namespace tl2_tp10_2023_adanSmith01.Repository;
 
 public class TableroRepository: ITableroRepository
 {
-    private string connectionString = @"Data Source = DB/kanban.sqlite;Initial Catalog=Northwind;" + "Integrated Security=true";
+    private readonly string connectionString;
+
+    public TableroRepository(string CadenaDeConexion)
+    {
+        connectionString = CadenaDeConexion;
+    }
 
     public void CrearTablero(Tablero nuevoTablero){
-        using(var connection = new SQLiteConnection(connectionString))
+        try
         {
-            connection.Open();
-            
-            string queryString = @"
-            INSERT INTO Tablero (id_usuario_propietario, nombre, descripcion) 
-            VALUES (@idPropietario, @nombreTablero, @descripcionTablero);
-            ";
-            var command = new SQLiteCommand(queryString, connection);
 
-            command.Parameters.Add(new SQLiteParameter("@idPropietario", nuevoTablero.IdUsuarioPropietario));
-            command.Parameters.Add(new SQLiteParameter("@nombreTablero", nuevoTablero.Nombre));
-            command.Parameters.Add(new SQLiteParameter("@descripcionTablero", nuevoTablero.Descripcion));
+            using(var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                
+                string queryString = @"
+                INSERT INTO Tablero (id_usuario_propietario, nombre, descripcion) 
+                VALUES (@idPropietario, @nombreTablero, @descripcionTablero);
+                ";
+                var command = new SQLiteCommand(queryString, connection);
 
-            command.ExecuteNonQuery();
-            connection.Close();
+                command.Parameters.Add(new SQLiteParameter("@idPropietario", nuevoTablero.IdUsuarioPropietario));
+                command.Parameters.Add(new SQLiteParameter("@nombreTablero", nuevoTablero.Nombre));
+                command.Parameters.Add(new SQLiteParameter("@descripcionTablero", nuevoTablero.Descripcion));
+
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+
+        }catch(Exception)
+        {
+            throw new Exception("Hubo un problema al crear un nuevo tablero.");
         }
     }
 
     public void ModificarTablero(Tablero tableroModificar){
-        using(var connection = new SQLiteConnection(connectionString))
+        try
         {
-            connection.Open();
-            string queryString = @"
-            UPDATE Tablero 
-            SET id_usuario_propietario = @idPropietario, nombre = @nombreTablero, descripcion = @descripcionTablero 
-            WHERE id = @idTablero;
-            ";
 
-            var command = new SQLiteCommand(queryString, connection);
-            
-            command.Parameters.Add(new SQLiteParameter("@idPropietario", tableroModificar.IdUsuarioPropietario));
-            command.Parameters.Add(new SQLiteParameter("@nombreTablero", tableroModificar.Nombre));
-            command.Parameters.Add(new SQLiteParameter("@descripcionTablero", tableroModificar.Descripcion));
-            command.Parameters.Add(new SQLiteParameter("@idTablero", tableroModificar.Id));
+            using(var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                string queryString = @"
+                UPDATE Tablero 
+                SET id_usuario_propietario = @idPropietario, nombre = @nombreTablero, descripcion = @descripcionTablero 
+                WHERE id = @idTablero;
+                ";
 
-            command.ExecuteNonQuery();
-            connection.Close();
+                var command = new SQLiteCommand(queryString, connection);
+                
+                command.Parameters.Add(new SQLiteParameter("@idPropietario", tableroModificar.IdUsuarioPropietario));
+                command.Parameters.Add(new SQLiteParameter("@nombreTablero", tableroModificar.Nombre));
+                command.Parameters.Add(new SQLiteParameter("@descripcionTablero", tableroModificar.Descripcion));
+                command.Parameters.Add(new SQLiteParameter("@idTablero", tableroModificar.Id));
+
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+
+        }catch(Exception)
+        {
+            throw new Exception("Hubo un problema al modificar el tablero.");
         }
     }
 
     public List<Tablero> GetAllTableros(){
-        List<Tablero> tableros = new List<Tablero>();
-
-        using(var connection = new SQLiteConnection(connectionString))
+        try
         {
-            connection.Open();
-            string queryString = @"SELECT * FROM Tablero;";
-            var command = new SQLiteCommand(queryString, connection);
+            List<Tablero> tableros = new List<Tablero>();
 
-            using(var reader = command.ExecuteReader())
+            using(var connection = new SQLiteConnection(connectionString))
             {
-                while(reader.Read()){
-                    Tablero tablero = new Tablero
-                    {
-                        Id = Convert.ToInt32(reader["id"]),
-                        IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]),
-                        Nombre = reader["nombre"].ToString(),
-                        Descripcion = reader["descripcion"].ToString()
-                    };
-                    tableros.Add(tablero); 
+                connection.Open();
+                string queryString = @"SELECT * FROM Tablero;";
+                var command = new SQLiteCommand(queryString, connection);
+
+                using(var reader = command.ExecuteReader())
+                {
+                    while(reader.Read()){
+                        Tablero tablero = new Tablero
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                            IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]),
+                            Nombre = reader["nombre"].ToString(),
+                            Descripcion = reader["descripcion"].ToString()
+                        };
+                        tableros.Add(tablero); 
+                    }
                 }
+
+                connection.Close();
             }
 
-            connection.Close();
+            return tableros;
+        }catch(Exception)
+        {
+            throw new Exception("Hubo un problema con la base de datos al momento de hacer la lectura de datos de tableros.");
         }
 
-        return tableros;
     }
 
-    public Tablero? GetTablero(int idTablero){
+    public Tablero GetTablero(int idTablero){
         Tablero tableroEncontrado = null;
         using(var connection = new SQLiteConnection(connectionString))
         {
@@ -101,49 +129,66 @@ public class TableroRepository: ITableroRepository
             connection.Close();
         }
 
+        if(tableroEncontrado == null) throw new Exception("Tablero inexistente");
+
         return tableroEncontrado;
     }
 
     public List<Tablero> GetTablerosDeUsuario(int idUsuario){
-        List<Tablero> tablerosUsuario = new List<Tablero>();
-
-        using(var connection = new SQLiteConnection(connectionString))
+        try
         {
-            connection.Open();
-            string queryString = @"SELECT * FROM Tablero WHERE id_usuario_propietario = @idPropietario;";
-            var command = new SQLiteCommand(queryString, connection);
-            command.Parameters.Add(new SQLiteParameter("@idPropietario", idUsuario));
 
-            using(var reader = command.ExecuteReader())
+            List<Tablero> tablerosUsuario = new List<Tablero>();
+
+            using(var connection = new SQLiteConnection(connectionString))
             {
-                while(reader.Read()){
-                    Tablero tablero = new Tablero
-                    {
-                        Id = Convert.ToInt32(reader["id"]),
-                        IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]),
-                        Nombre = reader["nombre"].ToString(),
-                        Descripcion = reader["descripcion"].ToString()
-                    };
-                    tablerosUsuario.Add(tablero); 
+                connection.Open();
+                string queryString = @"SELECT * FROM Tablero WHERE id_usuario_propietario = @idPropietario;";
+                var command = new SQLiteCommand(queryString, connection);
+                command.Parameters.Add(new SQLiteParameter("@idPropietario", idUsuario));
+
+                using(var reader = command.ExecuteReader())
+                {
+                    while(reader.Read()){
+                        Tablero tablero = new Tablero
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                            IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]),
+                            Nombre = reader["nombre"].ToString(),
+                            Descripcion = reader["descripcion"].ToString()
+                        };
+                        tablerosUsuario.Add(tablero); 
+                    }
                 }
+
+                connection.Close();
             }
 
-            connection.Close();
+            return tablerosUsuario;
+        }catch(Exception)
+        {
+            throw new Exception("Hubo un problema con la base de datos al hacer la lectura de datos de tableros.");
         }
-
-        return tablerosUsuario;
     }
 
     public void EliminarTablero(int idTablero){
-        using(var connection = new SQLiteConnection(connectionString))
+        try
         {
-            connection.Open();
-            string queryString = @"DELETE FROM Tablero WHERE id = @idTablero;";
-            var command = new SQLiteCommand(queryString, connection);
-            command.Parameters.Add(new SQLiteParameter("@idTablero", idTablero));
 
-            command.ExecuteNonQuery();
-            connection.Close();
+            using(var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                string queryString = @"DELETE FROM Tablero WHERE id = @idTablero;";
+                var command = new SQLiteCommand(queryString, connection);
+                command.Parameters.Add(new SQLiteParameter("@idTablero", idTablero));
+
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+
+        }catch(Exception)
+        {
+            throw new Exception("Hubo un problema con la base de datos al eliminar el tablero.");
         }
     }
 }
