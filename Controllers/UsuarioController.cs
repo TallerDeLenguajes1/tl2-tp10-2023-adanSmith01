@@ -18,61 +18,110 @@ public class UsuarioController : Controller
 
     [HttpGet]
     public IActionResult Index(){
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        try
+        {
+            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
-        var usuarios = _usuariosRepo.GetAllUsuarios();
-        return View(new IndexUsuariosViewModel(usuarios));
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+
+            var usuarios = _usuariosRepo.GetAllUsuarios();
+
+            return View(new IndexUsuariosViewModel(usuarios));
+
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return RedirectToAction("Error");
+        }
     }
 
     [HttpGet]
     public IActionResult CrearUsuario(){
         if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToAction("Error");
 
-
-        return View(new CrearUsuarioViewModel());
+        return View(new UsuarioViewModel());
     }
 
     [HttpGet]
     public IActionResult ActualizarUsuario(int idUsuario){
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        try
+        {
+
+            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
 
-        var usuario = _usuariosRepo.GetUsuario(idUsuario);
-        return View(new UsuarioViewModel(usuario));
+            var usuario = _usuariosRepo.GetUsuario(idUsuario);
+            return View(new UsuarioViewModel(usuario));
+
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return RedirectToAction("Index");
+        }
     }
 
     [HttpPost]
-    public IActionResult CrearUsuario(CrearUsuarioViewModel usuario){
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(!ModelState.IsValid) return RedirectToAction("CrearUsuario");
+    public IActionResult CrearUsuario(UsuarioViewModel usuario){
+        try
+        {
+
+            if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(!ModelState.IsValid) return RedirectToAction("CrearUsuario");
 
 
-        var nuevo = new Usuario(usuario.UsuarioNuevo);
-        _usuariosRepo.CrearUsuario(nuevo);
-        return RedirectToAction("Index");
+            var nuevo = new Usuario(usuario);
+            _usuariosRepo.CrearUsuario(nuevo);
+            return RedirectToAction("Index");
+
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return RedirectToAction("Error");
+        }
     }
 
     [HttpPost]
     public IActionResult ActualizarUsuario(UsuarioViewModel usuario){
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(!ModelState.IsValid) return RedirectToAction("ActualizarUsuario", new{idUsuario = usuario.Id});
+        try
+        {
+
+            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(!ModelState.IsValid) return RedirectToAction("ActualizarUsuario", new{idUsuario = usuario.Id});
 
 
-        var usuarioAModificar = new Usuario(usuario);
-        _usuariosRepo.ModificarUsuario(usuarioAModificar);
-        return RedirectToAction("Index");
+            var usuarioAModificar = new Usuario(usuario);
+            _usuariosRepo.ModificarUsuario(usuarioAModificar);
+            return RedirectToAction("Index");
+
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return RedirectToAction("Error");
+        }
     }
 
-    public IActionResult DarBaja(int idUsuario){
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+    public IActionResult EliminarUsuario(int idUsuario){
+        try
+        {
 
-        _usuariosRepo.EliminarUsuario(idUsuario);
-        return RedirectToAction("Index");
+            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+
+            _usuariosRepo.EliminarUsuario(idUsuario);
+            return RedirectToAction("Index");
+
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return RedirectToAction("Error");
+        }
+    }
+
+    public IActionResult Error(){
+        return View(new ErrorViewModel());
     }
 }

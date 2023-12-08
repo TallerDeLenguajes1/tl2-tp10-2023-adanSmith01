@@ -20,74 +20,125 @@ public class TableroController: Controller
 
     [HttpGet]
     public IActionResult ListarTableros(int? idUsuario){
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        try
+        {
 
-        if(HttpContext.Session.GetString("rol") == Rol.Administrador.ToString()){
-            if(idUsuario == null){
+            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+
+            if(HttpContext.Session.GetString("rol") == Rol.Administrador.ToString()){
                 var tableros = _tablerosRepo.GetAllTableros();
                 var usuarios = _usuariosRepo.GetAllUsuarios();
                 return View(new ListaTablerosUsuarioViewModel(tableros, usuarios, true));
             }else{
-                var tableros = _tablerosRepo.GetTablerosDeUsuario((int)idUsuario);
-                return View(new ListaTablerosUsuarioViewModel(tableros, true));
+                var tableros = _tablerosRepo.GetTablerosDeUsuario(Convert.ToInt32(HttpContext.Session.GetString("id")));
+                return View(new ListaTablerosUsuarioViewModel(tableros, false));
             }
-        }else{
-            var tableros = _tablerosRepo.GetTablerosDeUsuario(Convert.ToInt32(HttpContext.Session.GetString("id")));
-            return View(new ListaTablerosUsuarioViewModel(tableros, false));
+
+        }catch(Exception ex){
+            _logger.LogError(ex.ToString());
+            return RedirectToAction("Error");
         }
     }
 
     [HttpGet]
     public IActionResult CrearTablero(){
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        try
+        {
+
+            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
 
-        var usuarios = _usuariosRepo.GetAllUsuarios();
-        return View(new TableroUsuariosViewModel(usuarios));
+            var usuarios = _usuariosRepo.GetAllUsuarios();
+            return View(new TableroUsuariosViewModel(usuarios));
+
+        }catch(Exception ex){
+            _logger.LogError(ex.ToString());
+            return RedirectToAction("Error");
+        }
     }
 
     [HttpGet]
     public IActionResult ActualizarTablero(int idTablero){
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        try
+        {
+
+            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
 
-        var tablero = _tablerosRepo.GetTablero(idTablero);
-        var usuarios = _usuariosRepo.GetAllUsuarios();
-        return View(new TableroUsuariosViewModel(tablero, usuarios));
+            var tablero = _tablerosRepo.GetTablero(idTablero);
+            var usuarios = _usuariosRepo.GetAllUsuarios();
+            return View(new TableroUsuariosViewModel(tablero, usuarios));
+
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return RedirectToAction("Error");
+        }
     }
 
     [HttpPost]
     public IActionResult CrearTablero(TableroUsuariosViewModel nuevo){
-        if(!ModelState.IsValid) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        try
+        {
+
+            if(!ModelState.IsValid) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
 
-        var nuevoTablero = new Tablero(nuevo.Tablero);
-        _tablerosRepo.CrearTablero(nuevoTablero);
-        return RedirectToAction("AllBoards");
+            var nuevoTablero = new Tablero(nuevo.Tablero);
+            _tablerosRepo.CrearTablero(nuevoTablero);
+            return RedirectToAction("ListarTableros");
+
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return RedirectToAction("Error");
+        }
     }
 
     [HttpPost]
     public IActionResult ActualizarTablero(TableroUsuariosViewModel tableroUVM){
-        if(!ModelState.IsValid) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        try
+        {
+
+            if(!ModelState.IsValid) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
 
-        var tableroActualizado = new Tablero(tableroUVM.Tablero);
-        _tablerosRepo.ModificarTablero(tableroActualizado);
-        return RedirectToAction("AllBoards");
+            var tableroActualizado = new Tablero(tableroUVM.Tablero);
+            _tablerosRepo.ModificarTablero(tableroActualizado);
+            return RedirectToAction("ListarTableros");
+
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return RedirectToAction("Error");
+        }
     }
 
     public IActionResult EliminarTablero(int idTablero){
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        try
+        {
 
-        var id = _tablerosRepo.GetTablero(idTablero).IdUsuarioPropietario;
-        _tablerosRepo.EliminarTablero(idTablero);
-        return RedirectToAction("AllBoards");
+            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+
+            var id = _tablerosRepo.GetTablero(idTablero).IdUsuarioPropietario;
+            _tablerosRepo.EliminarTablero(idTablero);
+            return RedirectToAction("ListarTableros");
+
+        }catch(Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return RedirectToAction("Error");
+        }
+    }
+
+    public IActionResult Error(){
+        return View(new ErrorViewModel());
     }
 }
