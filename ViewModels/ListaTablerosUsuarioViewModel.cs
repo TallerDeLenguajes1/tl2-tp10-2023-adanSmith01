@@ -25,4 +25,8 @@ public class ListaTablerosUsuarioViewModel
         foreach(var tablero in tableros) this.tableros.Add(new TableroViewModel(tablero));
         this.permisoParaABM = permisoParaABM;
     }
+
+    public ListaTablerosUsuarioViewModel(){
+        this.tableros = new List<TableroViewModel>();
+    }
 }
