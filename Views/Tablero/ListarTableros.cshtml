@@ -10,7 +10,7 @@
 
 <section>
     <article>
-        <a asp-controller="Tablero" asp-action="CrearTablero" class="btn btn-outline-success btn-add">+ Añadir tablero</a>
+        @if(Model.PermisoParaABM){<a asp-controller="Tablero" asp-action="CrearTablero" class="btn btn-outline-success btn-add">+ Añadir tablero</a>}
         @if(Model.Tableros.Count == 0){
             <h2>NO HAY TABLEROS REGISTRADOS</h2>
         }else{
