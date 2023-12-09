@@ -171,6 +171,47 @@ public class TableroRepository: ITableroRepository
         }
     }
 
+    public List<Tablero> GetBoardsWithAssignedTasksByUser(int idUser){
+        try
+        {
+
+            List<Tablero> tablerosUsuario = new List<Tablero>();
+
+            using(var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+                string queryString = @"
+                SELECT DISTINCT(tablero.id), tablero.nombre, tablero.descripcion, id_usuario_propietario
+                FROM usuario INNER JOIN tablero ON(usuario.id = id_usuario_propietario)
+                INNER JOIN tarea ON(tablero.id = tarea.id_tablero)
+                WHERE id_usuario_asignado = @idUserAssigned AND id_usuario_propietario != @idUserAssigned;";
+                var command = new SQLiteCommand(queryString, connection);
+                command.Parameters.Add(new SQLiteParameter("@idUserAssigned", idUser));
+
+                using(var reader = command.ExecuteReader())
+                {
+                    while(reader.Read()){
+                        Tablero tablero = new Tablero
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                            IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]),
+                            Nombre = reader["nombre"].ToString(),
+                            Descripcion = reader["descripcion"].ToString()
+                        };
+                        tablerosUsuario.Add(tablero); 
+                    }
+                }
+
+                connection.Close();
+            }
+
+            return tablerosUsuario;
+        }catch(Exception)
+        {
+            throw new Exception("Hubo un problema con la base de datos al hacer la lectura de datos de tableros.");
+        }
+    }
+
     public void EliminarTablero(int idTablero){
         try
         {
