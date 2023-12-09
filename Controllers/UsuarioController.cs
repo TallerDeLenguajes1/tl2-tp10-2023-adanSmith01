@@ -45,13 +45,13 @@ public class UsuarioController : Controller
 
     [HttpGet]
     public IActionResult ActualizarUsuario(int idUsuario){
+
+        if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        
         try
         {
-
-            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
-
-
             var usuario = _usuariosRepo.GetUsuario(idUsuario);
             return View(new UsuarioViewModel(usuario));
 
@@ -64,15 +64,17 @@ public class UsuarioController : Controller
 
     [HttpPost]
     public IActionResult CrearUsuario(UsuarioViewModel usuario){
+
+        if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        
+        if(!ModelState.IsValid) return RedirectToAction("CrearUsuario");
+
+        var nuevo = new Usuario(usuario);
+
         try
         {
-
-            if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
-            if(!ModelState.IsValid) return RedirectToAction("CrearUsuario");
-
-
-            var nuevo = new Usuario(usuario);
             _usuariosRepo.CrearUsuario(nuevo);
             return RedirectToAction("Index");
 
@@ -85,15 +87,16 @@ public class UsuarioController : Controller
 
     [HttpPost]
     public IActionResult ActualizarUsuario(UsuarioViewModel usuario){
+        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        
+        if(!ModelState.IsValid) return RedirectToAction("ActualizarUsuario", new{idUsuario = usuario.Id});
+        
+        var usuarioAModificar = new Usuario(usuario);
+        
         try
         {
-
-            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
-            if(!ModelState.IsValid) return RedirectToAction("ActualizarUsuario", new{idUsuario = usuario.Id});
-
-
-            var usuarioAModificar = new Usuario(usuario);
             _usuariosRepo.ModificarUsuario(usuarioAModificar);
             return RedirectToAction("Index");
 
@@ -105,12 +108,13 @@ public class UsuarioController : Controller
     }
 
     public IActionResult EliminarUsuario(int idUsuario){
+        
+        if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+
         try
         {
-
-            if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
-
             _usuariosRepo.EliminarUsuario(idUsuario);
             return RedirectToAction("Index");
 
