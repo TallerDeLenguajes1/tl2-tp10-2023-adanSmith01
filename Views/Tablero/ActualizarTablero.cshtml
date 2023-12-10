@@ -7,7 +7,6 @@
 <section>
     <article>
         <form asp-controller = "Tablero" asp-action="ActualizarTablero" method="post" class="form-view">
-            <input hidden asp-for="@Model.Tablero.Id">
             <section class="mb-3">
                 <label asp-for="@Model.Tablero.Nombre" class="form-label"></label>
                 <input asp-for = "@Model.Tablero.Nombre" value="@Model.Tablero.Nombre" class="form-control">
@@ -17,6 +16,12 @@
                 <label asp-for="@Model.Tablero.Descripcion" class="form-label"></label>
                 <input asp-for = "@Model.Tablero.Descripcion" value="@Model.Tablero.Descripcion" class="form-control">
             </section>
+            <section class="mb-3">
+                <label asp-for="@Model.Usuario.Id" class="form-label">Nombre del propietario</label>
+                <input asp-for = "@Model.Usuario.Nombre" class="form-control" disabled>
+            </section>
+            <input hidden asp-for="@Model.Tablero.IdUsuarioPropietario" value="@Model.Usuario.Id">
+            <input hidden asp-for="@Model.Tablero.Id">
             <input type="submit" class="btn btn-outline-success" value="Confirmar">
         </form>
     </article>
