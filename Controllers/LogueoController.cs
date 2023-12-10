@@ -33,7 +33,9 @@ public class LogueoController: Controller
 
             _logger.LogInformation($"El usuario {usuarioLogueado.NombreUsuario} ingreso correctamente");
 
-            return RedirectToRoute(new {controller = "Tablero", action = "ListarTableros"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new {controller = "Tablero", action = "ListarTableros"});
+
+            return RedirectToRoute(new {controller = "Tablero", action = "ListarTableros", value="All"});
 
         }catch(Exception ex)
         {

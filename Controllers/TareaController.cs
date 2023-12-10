@@ -21,7 +21,7 @@ public class TareaController : Controller
     }
 
     [HttpGet]
-    public IActionResult ListarTareas(int idTablero){
+    public IActionResult ListarTareas(int idTablero, bool? mostrarTareasAsignadasYNoAsignadas){
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         
         var rolUsuarioAutenticado = HttpContext.Session.GetString("rol");
@@ -29,13 +29,44 @@ public class TareaController : Controller
         try
         {
             var tablero = _tablerosRepo.GetTablero(idTablero);
-            var tareas = _tareasRepo.GetTareasDeTablero(idTablero);
+            var usuarioPropietario = _usuariosRepo.GetUsuario(tablero.IdUsuarioPropietario);
             var usuarios = _usuariosRepo.GetAllUsuarios();
+            var tareasTablero = _tareasRepo.GetTareasDeTablero(tablero.Id);
 
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString()) if(tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
 
-            return View(new ListaTareasTableroViewModel(tareas, usuarios, tablero));
-
+            if(mostrarTareasAsignadasYNoAsignadas == null)
+            {
+                if(rolUsuarioAutenticado != Rol.Administrador.ToString() && usuarioPropietario.Id != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
+                return View(new ListaTareasTableroViewModel(tareasTablero, usuarios, tablero, true, false));
+            }else
+            {
+                if((bool)mostrarTareasAsignadasYNoAsignadas)
+                {
+                    var tareasAsignadas = tareasTablero.Where(tarea => tarea.IdUsuarioAsignado == Convert.ToInt32(HttpContext.Session.GetString("id"))).ToList();
+                    if(usuarioPropietario.Id == Convert.ToInt32(HttpContext.Session.GetString("id")))
+                    {
+                        var tareasNoAsignadas = tareasTablero.Where(tarea => tarea.IdUsuarioAsignado == null).ToList();
+                        tareasAsignadas.AddRange(tareasNoAsignadas);
+                        return View(new ListaTareasTableroViewModel(tareasAsignadas, usuarios, tablero, true, false));
+                    }else
+                    {
+                        if(!tareasAsignadas.Any())
+                        {
+                            if(rolUsuarioAutenticado != Rol.Administrador.ToString()) return RedirectToAction("Error");
+                            return RedirectToAction("ListarTareas", new{idTablero = tablero.Id});
+                        }else
+                        {
+                            var tareasNoAsignadas = tareasTablero.Where(tarea => tarea.IdUsuarioAsignado == null).ToList();
+                            tareasAsignadas.AddRange(tareasNoAsignadas);
+                            return View(new ListaTareasTableroViewModel(tareasAsignadas, usuarios, tablero, false, true));
+                        }
+                    }
+                }else
+                {
+                    if(rolUsuarioAutenticado != Rol.Administrador.ToString()) if(usuarioPropietario.Id != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
+                    return RedirectToAction("ListarTareas", new{idTablero = tablero.Id});
+                }
+            }
         }catch(Exception ex)
         {
             _logger.LogError(ex.ToString());
@@ -48,13 +79,11 @@ public class TareaController : Controller
         
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
-        var rolUsuarioAutenticado = HttpContext.Session.GetString("rol");
-
         try
         {
             var tablero = _tablerosRepo.GetTablero(idTablero);
             var usuarios = _usuariosRepo.GetAllUsuarios();
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString()) if(tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
+            if(tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
             return View(new TareaTableroUsuariosViewModel(usuarios, idTablero));
 
         }catch(Exception ex)
@@ -74,7 +103,7 @@ public class TareaController : Controller
         {            
             var tarea = _tareasRepo.GetTarea(idTarea);
             var tablero = _tablerosRepo.GetTablero(tarea.IdTablero);
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString()) if(tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
             var usuarios = _usuariosRepo.GetAllUsuarios();
             return View(new TareaTableroUsuariosViewModel(tarea, usuarios));
 
@@ -92,12 +121,10 @@ public class TareaController : Controller
         
         if(!ModelState.IsValid) return RedirectToAction("ListarTareas", new{idTablero = tareaTU.IdTablero});
 
-        var rolUsuarioAutenticado = HttpContext.Session.GetString("rol");
-
         try
         {
             var tablero = _tablerosRepo.GetTablero(tareaTU.IdTablero);
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString()) if(tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
+            if(tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
 
             var tareaNueva = new Tarea(tareaTU.Tarea);
             _tareasRepo.CrearTarea(tareaTU.IdTablero, tareaNueva);
@@ -114,6 +141,8 @@ public class TareaController : Controller
     public IActionResult ActualizarTarea(TareaTableroUsuariosViewModel tareaTU){
         
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+
+        if(!ModelState.IsValid) return RedirectToAction("ListarTareas", new{idTablero = tareaTU.IdTablero});
 
         var rolUsuarioAutenticado = HttpContext.Session.GetString("rol");
 
