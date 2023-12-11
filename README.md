@@ -14,8 +14,13 @@ optimizar el flujo de trabajo, controlar tareas y facilitar la colaboración en 
 
 ## Usuarios registrados para autenticación
 - Como usuario Administrador
+
     Nombre de usuario: Pamela10
+
     contraseña: contrasenia1
+    
 - Como usuario Operador
+
     Nombre de usuario: usuarioOperador
+
     contraseña: contrasenia3
