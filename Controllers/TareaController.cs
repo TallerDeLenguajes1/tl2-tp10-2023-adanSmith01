@@ -167,7 +167,7 @@ public class TareaController : Controller
         var tarea = _tareasRepo.GetTarea(idTarea);
         tarea.Estado = estadoNuevo;
         _tareasRepo.ModificarTarea(tarea);
-        return RedirectToAction("ListarTareas", new{idTablero = tarea.IdTablero});
+        return RedirectToAction("ListarTareas", new{idTablero = tarea.IdTablero, mostrarTareasAsignadasYNoAsignadas=true});
     }
 
     public IActionResult EliminarTarea(int idTarea){

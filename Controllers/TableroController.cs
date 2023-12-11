@@ -73,7 +73,7 @@ public class TableroController: Controller
 
         try
         {
-            if(idUsuario != null && idUsuario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToRoute("Error");
+            if(idUsuario != null && idUsuario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
             var usuario = _usuariosRepo.GetUsuario(Convert.ToInt32(HttpContext.Session.GetString("id")));
             var tableroUsuario = new TableroUsuarioViewModel{Usuario = new UsuarioViewModel(usuario)};
             return View(tableroUsuario);
@@ -95,7 +95,7 @@ public class TableroController: Controller
         {
             var tablero = _tablerosRepo.GetTablero(idTablero);
 
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTableros");
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTableros");//Propenso a cambio
             var usuarioPropietario = _usuariosRepo.GetUsuario(tablero.IdUsuarioPropietario);
             var tableroUsuario = new TableroUsuarioViewModel{Tablero = new TableroViewModel(tablero), Usuario = new UsuarioViewModel(usuarioPropietario)};
             return View(tableroUsuario);
@@ -155,7 +155,7 @@ public class TableroController: Controller
             
             _tablerosRepo.ModificarTablero(tableroActualizado);
 
-            if(tableroActualizado.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTableros", new{value=tableroUVM.Tablero.IdUsuarioPropietario});
+            if(tableroActualizado.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTableros", new{value="All"});
             
             return RedirectToAction("ListarTableros"); 
 
@@ -176,11 +176,11 @@ public class TableroController: Controller
         {
             var IdUsuarioPropietario = _tablerosRepo.GetTablero(idTablero).IdUsuarioPropietario;
             
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");//Propenso a cambio
             
             _tablerosRepo.EliminarTablero(idTablero);
 
-            if(IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTableros", new{value=IdUsuarioPropietario});
+            if(IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTableros", new{value="All"});
 
             return RedirectToAction("ListarTableros");
 
