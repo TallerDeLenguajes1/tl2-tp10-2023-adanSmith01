@@ -77,7 +77,17 @@
                                 </td>
                             }else if(Model.PermisoModificarEstado)
                             {
-                                @if(tarea.IdUsuarioAsignado != null){<td>Modificar estado</td>}
+                                @if(tarea.IdUsuarioAsignado != null)
+                                {
+                                    <td>
+                                        <form asp-controller="Tarea" asp-action="ActualizarEstado" method="post">
+                                            <select name="estadoNuevo" asp-items = "@Html.GetEnumSelectList<EstadoTarea>()">
+                                            </select>
+                                            <input hidden name="idTarea" value="@tarea.Id">
+                                            <input type="submit" value="Modificar estado">
+                                        </form>
+                                    </td>
+                                }
                             }
                         </tr>
                     }
