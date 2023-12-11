@@ -30,7 +30,5 @@ public class UsuarioViewModel
         this.Rol = usuario.RolUsuario;
     }
 
-    public UsuarioViewModel(){
-        
-    }
+    public UsuarioViewModel(){}
 }
