@@ -1,4 +1,5 @@
 using System.Data.SQLite;
+using Encrypt.Net.Text;
 using tl2_tp10_2023_adanSmith01.Models;
 namespace tl2_tp10_2023_adanSmith01.Repository;
 
@@ -26,7 +27,7 @@ public class UsuarioRepository: IUsuarioRepository
                 var command = new SQLiteCommand(queryString, connection);
 
                 command.Parameters.Add(new SQLiteParameter("@nombreUsuario", nuevoUsuario.NombreUsuario));
-                command.Parameters.Add(new SQLiteParameter("@contraseniaUsuario", nuevoUsuario.Contrasenia));
+                command.Parameters.Add(new SQLiteParameter("@contraseniaUsuario", Cifrado.sha256(nuevoUsuario.Contrasenia).Hash));
                 command.Parameters.Add(new SQLiteParameter("@rolUsuario", Convert.ToInt32(nuevoUsuario.RolUsuario)));
                 command.ExecuteNonQuery();
                 connection.Close();
@@ -137,7 +138,7 @@ public class UsuarioRepository: IUsuarioRepository
             
             var command = new SQLiteCommand(queryString, connection);
             command.Parameters.Add(new SQLiteParameter("@nombreUsuario", nombre));
-            command.Parameters.Add(new SQLiteParameter("@contraseniaUsuario", contrasenia));
+            command.Parameters.Add(new SQLiteParameter("@contraseniaUsuario", Cifrado.sha256(contrasenia).Hash));
             using(var reader = command.ExecuteReader())
             {
                 if(reader.Read()){
@@ -145,7 +146,6 @@ public class UsuarioRepository: IUsuarioRepository
                     {
                         Id = Convert.ToInt32(reader["id"]),
                         NombreUsuario = reader["nombre_de_usuario"].ToString(),
-                        Contrasenia = reader["contrasenia"].ToString(),
                         RolUsuario = (Rol)Convert.ToInt32(reader["rol"])
                     };
                 }
