@@ -17,28 +17,27 @@ public class UsuarioController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index(){
+    public IActionResult ListarUsuarios(){
         try
         {
             if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
-            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para ingresar a la pagina."});
 
             var usuarios = _usuariosRepo.GetAllUsuarios();
-
-            return View(new IndexUsuariosViewModel(usuarios));
+            return View(new MostrarUsuariosViewModel(usuarios));
 
         }catch(Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return RedirectToAction("Error");
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = ex.Message});
         }
     }
 
     [HttpGet]
     public IActionResult CrearUsuario(){
-        if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToAction("Error");
+        if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 400. No tiene autorizacion para ingresar a la pagina."});
 
         return View(new UsuarioViewModel());
     }
@@ -48,7 +47,7 @@ public class UsuarioController : Controller
 
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 400. No tiene autorizacion para ingresar a la pagina."});
         
         try
         {
@@ -58,7 +57,7 @@ public class UsuarioController : Controller
         }catch(Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return RedirectToAction("Index");
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = ex.Message});
         }
     }
 
@@ -67,21 +66,27 @@ public class UsuarioController : Controller
 
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 400. No tiene autorizacion para ingresar a la pagina."});
         
         if(!ModelState.IsValid) return RedirectToAction("CrearUsuario");
+
+        if(_usuariosRepo.ExisteUsuario(usuario.Nombre))
+        {
+            TempData["UsuarioExistente"] = "Ya existe un usuario con ese nombre. Por favor, elija otro nombre de usuario.";
+            return RedirectToAction("CrearUsuario");
+        }
 
         var nuevo = new Usuario(usuario);
 
         try
         {
             _usuariosRepo.CrearUsuario(nuevo);
-            return RedirectToAction("Index");
+            return RedirectToAction("ListarUsuarios");
 
         }catch(Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return RedirectToAction("Error");
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = ex.Message});
         }
     }
 
@@ -93,17 +98,21 @@ public class UsuarioController : Controller
         
         if(!ModelState.IsValid) return RedirectToAction("ActualizarUsuario", new{idUsuario = usuario.Id});
         
-        var usuarioAModificar = new Usuario(usuario);
-        
         try
         {
+            var usuarioAModificar = new Usuario(usuario);
+            if(_usuariosRepo.ExisteUsuario(usuario.Nombre) && _usuariosRepo.GetUsuario(usuario.Id).NombreUsuario != usuario.Nombre)
+            {
+                TempData["UsuarioExistente"] = "Ya existe un usuario con ese nombre. Por favor, elija otro nombre de usuario.";
+                return RedirectToAction("ActualizarUsuario", new{idUsuario = usuario.Id});
+            }
             _usuariosRepo.ModificarUsuario(usuarioAModificar);
-            return RedirectToAction("Index");
+            return RedirectToAction("ListarUsuarios");
 
         }catch(Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return RedirectToAction("Error");
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = ex.Message});
         }
     }
 
@@ -116,16 +125,12 @@ public class UsuarioController : Controller
         try
         {
             _usuariosRepo.EliminarUsuario(idUsuario);
-            return RedirectToAction("Index");
+            return RedirectToAction("ListarUsuarios");
 
         }catch(Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return RedirectToAction("Error");
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = ex.Message});
         }
-    }
-
-    public IActionResult Error(){
-        return View(new ErrorViewModel());
     }
 }

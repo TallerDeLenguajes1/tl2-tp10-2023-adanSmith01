@@ -17,9 +17,7 @@ public class LogueoController: Controller
     }
 
     [HttpGet]
-    public IActionResult Index(){
-        return View();
-    }
+    public IActionResult Index() => View();
 
     [HttpPost]
     public IActionResult ProcesoLogueo(LogueoViewModel logueoUsuario){
@@ -29,6 +27,13 @@ public class LogueoController: Controller
 
             var usuarioLogueado = _usuariosRepo.GetUsuario(logueoUsuario.NombreUsuario, logueoUsuario.ContraseniaUsuario);
 
+            if(usuarioLogueado == null)
+            {
+                _logger.LogWarning($"Intento de acceso invalido - Usuario: {logueoUsuario.NombreUsuario} - Clave Ingresada: {logueoUsuario.ContraseniaUsuario}");
+                TempData["MensajeError"] = "Acceso invalido. Ingrese los datos correctos.";
+                return RedirectToAction("Index");
+            }
+
             LoguearUsuario(usuarioLogueado);
 
             _logger.LogInformation($"El usuario {usuarioLogueado.NombreUsuario} ingreso correctamente");
@@ -37,9 +42,10 @@ public class LogueoController: Controller
 
             return RedirectToRoute(new {controller = "Tablero", action = "ListarTableros", value="All"});
 
-        }catch(Exception ex)
+        }
+        catch(Exception ex)
         {
-            _logger.LogWarning($"Error: {ex} Intento de acceso invalido - Usuario: {logueoUsuario.NombreUsuario} - Clave ingresada: {logueoUsuario.ContraseniaUsuario}");
+            _logger.LogError(ex.ToString());
             
             return RedirectToAction("Index");
         }
