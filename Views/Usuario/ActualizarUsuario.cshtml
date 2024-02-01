@@ -3,6 +3,9 @@
 @{ViewData["title"]="Actualizar usuario";}
 
 <h1 class="text-center">Actualizar usuario</h1>
+
+@if(TempData.ContainsKey("UsuarioExistente")){<section><article><p>@TempData["UsuarioExistente"]</p></article></section>}
+
 <section>
     <article>
         @if (String.IsNullOrEmpty(Model.Nombre))

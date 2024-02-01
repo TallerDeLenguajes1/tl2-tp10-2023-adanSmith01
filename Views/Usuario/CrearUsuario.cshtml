@@ -4,6 +4,8 @@
 
 <h1 class="text-center">Crear usuario</h1>
 
+@if(TempData.ContainsKey("UsuarioExistente")){<section><article><p>@TempData["UsuarioExistente"]</p></article></section>}
+
 <section>
     <article>
         <form asp-controller = "Usuario" asp-action="CrearUsuario" method="post" class="form-view">
