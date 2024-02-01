@@ -2,6 +2,8 @@
 
 @{ViewData["Title"]="Iniciar sesion";}
 
+@if(TempData.ContainsKey("MensajeError")){<section><article><p>@TempData["MensajeError"]</p></article></section>}
+
 <section>
     <article>
         <form asp-controller="Logueo" asp-action="ProcesoLogueo" class="form-logger" method="post">
