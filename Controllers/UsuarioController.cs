@@ -17,13 +17,14 @@ public class UsuarioController : Controller
     }
 
     [HttpGet]
-    public IActionResult ListarUsuarios(){
+    public IActionResult ListarUsuarios()
+    {
+        if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para ingresar a la pagina."});
+        
         try
         {
-            if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-
-            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para ingresar a la pagina."});
-
             var usuarios = _usuariosRepo.GetAllUsuarios();
             return View(new MostrarUsuariosViewModel(usuarios));
 
