@@ -29,12 +29,12 @@
                         @if(string.IsNullOrEmpty(Context.Session.GetString("usuario")))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Logueo" asp-action="Index">Iniciar sesion</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Logueo" asp-action="Index">Iniciar sesión</a>
                             </li>
                         }else
                         {
                             <li>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Tablero" asp-action="ListarTableros">Mis tableros</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Tablero" asp-action="MisTableros">Mis tableros</a>
                             </li>
                             if(Context.Session.GetString("rol") == Rol.Administrador.ToString())
                             {
@@ -42,9 +42,12 @@
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Usuario" asp-action="ListarUsuarios">Gestion usuarios</a>
                                 </li>
                                 <li>
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tablero" asp-action="ListarTableros" asp-route-value="All">Gestion tableros</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tablero" asp-action="ListarTablerosUsuario" asp-route-value="All">Gestión tableros</a>
                                 </li>
                             }
+                            <li>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Logueo" asp-action="CerrarSesion" onclick="return confirm('¿Está seguro de cerrar sesión?')">Cerrar Sesión</a>
+                            </li>
                         }
                     </ul>
                 </div>
