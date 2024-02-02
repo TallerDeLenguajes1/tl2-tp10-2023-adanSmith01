@@ -19,68 +19,70 @@ public class TableroController: Controller
     }
 
     [HttpGet]
-    public IActionResult ListarTableros(string value){
+    public IActionResult MisTableros()
+    {
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
         try
         {
-            int idUsuario;
+            var usuario = _usuariosRepo.GetUsuario(Convert.ToInt32(HttpContext.Session.GetString("id")));
+            var tablerosPropios = _tablerosRepo.GetTablerosDeUsuario(usuario.Id);
+            var tablerosConTareasAsignadas = _tablerosRepo.GetTablerosConTareasAsignadas(usuario.Id);
             var usuariosPropietarios = _usuariosRepo.GetAllUsuarios();
-            if(HttpContext.Session.GetString("rol") == Rol.Administrador.ToString()){
-                if(!string.IsNullOrEmpty(value))
-                {
-                    if(value.ToLower() == "all")
-                    {
-                        var tableros = _tablerosRepo.GetAllTableros();
-                        return View(new ListaTablerosUsuarioViewModel(tableros,usuariosPropietarios));
-                    }else if(int.TryParse(value, out idUsuario))
-                    {
-                        var usuarioPropietario = _usuariosRepo.GetUsuario(idUsuario);
-                        var tableros = _tablerosRepo.GetTablerosDeUsuario(usuarioPropietario.Id);
-                        return View(new ListaTablerosUsuarioViewModel(tableros, usuarioPropietario));
-                    }else
-                    {
-                        return RedirectToAction("Error");
-                    }
-                }else
-                {
-                    var usuario = _usuariosRepo.GetUsuario(Convert.ToInt32(HttpContext.Session.GetString("id")));
-                    var tablerosPropios = _tablerosRepo.GetTablerosDeUsuario(usuario.Id);
-                    var tablerosConYSinTareasAsignadas = _tablerosRepo.GetBoardsWithAssignedTasksByUser(usuario.Id);
-                    return View(new ListaTablerosUsuarioViewModel(tablerosPropios, usuario, tablerosConYSinTareasAsignadas, usuariosPropietarios));
-                }
-                
-            }else
-            {
-                if(!string.IsNullOrEmpty(value)) return RedirectToAction("Error");
-
-                var usuario = _usuariosRepo.GetUsuario(Convert.ToInt32(HttpContext.Session.GetString("id")));
-                var tablerosPropios = _tablerosRepo.GetTablerosDeUsuario(usuario.Id);
-                var tablerosConYSinTareasAsignadas = _tablerosRepo.GetBoardsWithAssignedTasksByUser(usuario.Id);
-                return View(new ListaTablerosUsuarioViewModel(tablerosPropios, usuario, tablerosConYSinTareasAsignadas, usuariosPropietarios));
-            }
-
-        }catch(Exception ex){
+            return View(new MisTablerosViewModel(tablerosPropios, tablerosConTareasAsignadas, usuariosPropietarios));
+        }
+        catch(Exception ex)
+        {
             _logger.LogError(ex.ToString());
-            return RedirectToAction("Error");
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = ex.Message});
+        }
+    }
+
+    public IActionResult ListarTablerosUsuario(int? idUsuarioPropietario)
+    {
+        if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+
+        try
+        {
+            if(HttpContext.Session.GetString("rol") == Rol.Administrador.ToString())
+            {
+                if(idUsuarioPropietario == null)
+                {
+                    var usuariosPropietarios = _usuariosRepo.GetAllUsuarios();
+                    var tablerosUsuarios = _tablerosRepo.GetAllTableros();
+                    return View(new ListaTablerosUsuarioViewModel(tablerosUsuarios, usuariosPropietarios));
+                }
+                else
+                {
+                    var usuarioPropietario = _usuariosRepo.GetUsuario((int)idUsuarioPropietario);
+                    if(usuarioPropietario == null) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 404. No existe el usuario especificado."});
+                    var tablerosUsuario = _tablerosRepo.GetTablerosDeUsuario(usuarioPropietario.Id);
+                    return View(new ListaTablerosUsuarioViewModel(tablerosUsuario, new List<Usuario>{usuarioPropietario}));
+                }
+            }
+            
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorización para ingresar a la página."});
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex.ToString());
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = ex.Message});
         }
     }
 
     [HttpGet]
-    public IActionResult CrearTablero(int? idUsuario){
+    public IActionResult CrearTablero(){
 
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
         try
         {
-            if(idUsuario != null && idUsuario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
             var usuario = _usuariosRepo.GetUsuario(Convert.ToInt32(HttpContext.Session.GetString("id")));
-            var tableroUsuario = new TableroUsuarioViewModel{Usuario = new UsuarioViewModel(usuario)};
-            return View(tableroUsuario);
-
-        }catch(Exception ex){
+            return View(new TableroUsuarioViewModel{Usuario = new UsuarioViewModel(usuario)});
+        }
+        catch(Exception ex){
             _logger.LogError(ex.ToString());
-            return RedirectToAction("Error");
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message=ex.Message});
         }
     }
 
@@ -94,8 +96,7 @@ public class TableroController: Controller
         try
         {
             var tablero = _tablerosRepo.GetTablero(idTablero);
-
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTableros");//Propenso a cambio
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para actualizar el tablero de otro usuario."});
             var usuarioPropietario = _usuariosRepo.GetUsuario(tablero.IdUsuarioPropietario);
             var tableroUsuario = new TableroUsuarioViewModel{Tablero = new TableroViewModel(tablero), Usuario = new UsuarioViewModel(usuarioPropietario)};
             return View(tableroUsuario);
@@ -112,25 +113,19 @@ public class TableroController: Controller
         
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         
-        var rolUsuarioAutenticado = HttpContext.Session.GetString("rol");
-
-        if(!ModelState.IsValid)
-        {
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString()) return RedirectToAction("ListarTableros");
-            return RedirectToAction("ListarTableros", new{value="all"});
-        } 
+        if(!ModelState.IsValid) return RedirectToAction("CrearTablero");
 
         try
         {
-            if(tableroUsuario.Tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
+            if(tableroUsuario.Tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No puede crear un tablero para otro usuario"});
             var nuevoTablero = new Tablero(tableroUsuario.Tablero);
             _tablerosRepo.CrearTablero(nuevoTablero);
-            return RedirectToAction("ListarTableros");
+            return RedirectToAction("MisTableros");
 
         }catch(Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return RedirectToAction("Error");
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = ex.Message});
         }
     }
 
@@ -141,28 +136,22 @@ public class TableroController: Controller
                 
         var rolUsuarioAutenticado = HttpContext.Session.GetString("rol");
 
-        if(!ModelState.IsValid)
-        {
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString()) return RedirectToAction("ListarTableros");
-            return RedirectToAction("ListarTableros", new{value="all"});
-        }
+        if(!ModelState.IsValid) return RedirectToAction("ActualizarTablero", new{idTablero = tableroUVM.Tablero.Id});
 
         try
         {
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tableroUVM.Tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
-            
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tableroUVM.Tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para actualizar el tablero de otro usuario."});
             var tableroActualizado = new Tablero(tableroUVM.Tablero);
-            
             _tablerosRepo.ModificarTablero(tableroActualizado);
-
-            if(tableroActualizado.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTableros", new{value="All"});
             
-            return RedirectToAction("ListarTableros"); 
+            if(tableroActualizado.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTablerosUsuario");
+
+            return RedirectToAction("MisTableros"); 
 
         }catch(Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return RedirectToAction("Error");
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = ex.Message});
         }
     }
 
@@ -175,23 +164,16 @@ public class TableroController: Controller
         try
         {
             var IdUsuarioPropietario = _tablerosRepo.GetTablero(idTablero).IdUsuarioPropietario;
-            
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");//Propenso a cambio
-            
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para eliminar el tablero de otro usuario."});
             _tablerosRepo.EliminarTablero(idTablero);
-
-            if(IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTableros", new{value="All"});
+            if(IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTablerosUsuario");
 
             return RedirectToAction("ListarTableros");
 
         }catch(Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return RedirectToAction("Error");
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = ex.Message});
         }
-    }
-
-    public IActionResult Error(){
-        return View(new ErrorViewModel());
     }
 }
