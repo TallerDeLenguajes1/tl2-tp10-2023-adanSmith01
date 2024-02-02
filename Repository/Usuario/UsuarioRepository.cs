@@ -241,7 +241,7 @@ public class UsuarioRepository: IUsuarioRepository
         {
             connection.Open();
             string queryString = @"UPDATE Usuario SET activo = 0
-                                  WHERE id = @idUsuario;";
+                                  WHERE id = @idUsuario AND activo = 1;";
             var command = new SQLiteCommand(queryString, connection);
             command.Parameters.Add(new SQLiteParameter("@idUsuario", idUsuario));
             
