@@ -38,22 +38,28 @@ public class LogueoController: Controller
 
             _logger.LogInformation($"El usuario {usuarioLogueado.NombreUsuario} ingreso correctamente");
 
-            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new {controller = "Tablero", action = "ListarTableros"});
+            if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new {controller = "Tablero", action = "MisTableros"});
 
-            return RedirectToRoute(new {controller = "Tablero", action = "ListarTableros", value="All"});
+            return RedirectToRoute(new {controller = "Tablero", action = "ListarTablerosUsuario"});
 
         }
         catch(Exception ex)
         {
             _logger.LogError(ex.ToString());
-            
             return RedirectToAction("Index");
         }
     }
+
 
     private void LoguearUsuario(Usuario usuario){
         HttpContext.Session.SetString("id", usuario.Id.ToString());
         HttpContext.Session.SetString("usuario", usuario.NombreUsuario);
         HttpContext.Session.SetString("rol", usuario.RolUsuario.ToString());
+    }
+    
+    public IActionResult CerrarSesion()
+    {
+        HttpContext.Session.Clear();
+        return RedirectToAction("Index");
     }
 }
