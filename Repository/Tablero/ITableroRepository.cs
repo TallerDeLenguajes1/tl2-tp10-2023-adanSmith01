@@ -8,6 +8,6 @@ public interface ITableroRepository
     List<Tablero> GetAllTableros();
     Tablero GetTablero(int idTablero);
     List<Tablero> GetTablerosDeUsuario(int idUsuario);
-    List<Tablero> GetBoardsWithAssignedTasksByUser(int idUser);
+    List<Tablero> GetTablerosConTareasAsignadas(int idUsuario);
     void EliminarTablero(int idTablero);
 }
