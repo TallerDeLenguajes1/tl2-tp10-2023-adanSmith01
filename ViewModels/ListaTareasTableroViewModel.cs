@@ -4,24 +4,22 @@ using tl2_tp10_2023_adanSmith01.Models;
 public class ListaTareasTableroViewModel
 {
     private TableroViewModel tablero;
-    private List<TareaViewModel> tareas;
-    private List<UsuarioViewModel> usuarios;
-    private bool permisoBM;
-    private bool permisoModificarEstado;
+    private List<TareaViewModel> tareasTablero;
+    private List<UsuarioViewModel> usuariosAsignados;
 
     public TableroViewModel Tablero { get => tablero; set => tablero = value; }
-    public List<TareaViewModel> Tareas { get => tareas; set => tareas = value; }
-    public List<UsuarioViewModel> Usuarios { get => usuarios; set => usuarios = value; }
-    public bool PermisoBM { get => permisoBM; }
-    public bool PermisoModificarEstado { get => permisoModificarEstado; }
+    public List<TareaViewModel> TareasTablero { get => tareasTablero; set => tareasTablero = value; }
+    public List<UsuarioViewModel> Usuarios { get => usuariosAsignados; set => usuariosAsignados = value; }
 
-    public ListaTareasTableroViewModel(List<Tarea> tareas, List<Usuario> usuarios, Tablero tablero, bool permisoBM, bool permisoModificarEstado){
-        this.usuarios = new List<UsuarioViewModel>();
-        this.tareas = new List<TareaViewModel>();
-        foreach(var tarea in tareas) this.tareas.Add(new TareaViewModel(tarea));
-        foreach(var usuario in usuarios) this.usuarios.Add(new UsuarioViewModel(usuario));
+    public ListaTareasTableroViewModel(Tablero tablero, List<Tarea> tareasTablero, List<Usuario> usuariosAsignados){
+        this.usuariosAsignados = new List<UsuarioViewModel>();
+        this.tareasTablero = new List<TareaViewModel>();
         this.tablero = new TableroViewModel(tablero);
-        this.permisoBM = permisoBM;
-        this.permisoModificarEstado = permisoModificarEstado;
+        foreach(var tarea in tareasTablero) 
+        {
+            if(string.IsNullOrEmpty(tarea.Descripcion)) tarea.Descripcion = "Sin descripcion";
+            this.tareasTablero.Add(new TareaViewModel(tarea));
+        }
+        foreach(var usuario in usuariosAsignados) this.usuariosAsignados.Add(new UsuarioViewModel(usuario));
     }
 }
