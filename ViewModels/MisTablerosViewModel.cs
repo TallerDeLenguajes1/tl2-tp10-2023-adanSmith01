@@ -12,8 +12,16 @@ public class MisTablerosViewModel
         this.tablerosPropios = new List<TableroViewModel>();
         this.tablerosConTareasAsignadas = new List<TableroViewModel>();
         this.usuariosPropietarios = new List<UsuarioViewModel>();
-        foreach(var tableroPropio in tablerosPropios) this.tablerosPropios.Add(new TableroViewModel(tableroPropio));
-        foreach(var tableroCTA in tablerosConTareasAsignadas) this.tablerosConTareasAsignadas.Add(new TableroViewModel(tableroCTA));
+        foreach(var tableroPropio in tablerosPropios)
+        {
+            if(string.IsNullOrEmpty(tableroPropio.Descripcion)) tableroPropio.Descripcion = "Sin descripcion";
+            this.tablerosPropios.Add(new TableroViewModel(tableroPropio));
+        }
+        foreach(var tableroCTA in tablerosConTareasAsignadas)
+        {
+            if(string.IsNullOrEmpty(tableroCTA.Descripcion)) tableroCTA.Descripcion = "Sin descripcion";
+            this.tablerosConTareasAsignadas.Add(new TableroViewModel(tableroCTA));
+        }
         foreach(var usuarioPropietario in usuariosPropietarios) this.usuariosPropietarios.Add(new UsuarioViewModel(usuarioPropietario));
     }
 
