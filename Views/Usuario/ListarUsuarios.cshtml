@@ -8,11 +8,11 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Nombre</th>
-                <th>Rol</th>
-                <th>Modificar usuario</th>
-                <th>Eliminar usuario</th>
-                <th>Tableros</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Rol</th>
+                <th scope="col">Modificar usuario</th>
+                <th scope="col">Eliminar usuario</th>
+                <th scope="col">Tableros</th>
             </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -38,7 +38,7 @@
                         </a>
                     </td>
                     <td>
-                        <a asp-controller="Tablero" asp-action="ListarTablerosUsuario" asp-route-value = "@usuario.Id" class="btn btn-outline-dark" title="Ver tableros del usuario">Ver
+                        <a asp-controller="Tablero" asp-action="ListarTablerosUsuario" asp-route-idUsuarioPropietario = "@usuario.Id" class="btn btn-outline-dark" title="Ver tableros del usuario">Ver
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                             <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
                             <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
