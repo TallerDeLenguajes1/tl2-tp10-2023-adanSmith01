@@ -20,7 +20,8 @@ public class LogueoController: Controller
     public IActionResult Index() => View();
 
     [HttpPost]
-    public IActionResult ProcesoLogueo(LogueoViewModel logueoUsuario){
+    public IActionResult ProcesoLogueo(LogueoViewModel logueoUsuario)
+    {
         try
         {
             if(!ModelState.IsValid) return RedirectToAction("Index");
@@ -51,7 +52,8 @@ public class LogueoController: Controller
     }
 
 
-    private void LoguearUsuario(Usuario usuario){
+    private void LoguearUsuario(Usuario usuario)
+    {
         HttpContext.Session.SetString("id", usuario.Id.ToString());
         HttpContext.Session.SetString("usuario", usuario.NombreUsuario);
         HttpContext.Session.SetString("rol", usuario.RolUsuario.ToString());
