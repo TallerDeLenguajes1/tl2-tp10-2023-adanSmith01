@@ -9,11 +9,16 @@ public class UsuarioController : Controller
 {
     private readonly ILogger<UsuarioController> _logger;
     private readonly IUsuarioRepository _usuariosRepo;
+    private readonly ITableroRepository _tablerosRepo;
+    private readonly ITareaRepository _tareasRepo;
 
-    public UsuarioController(ILogger<UsuarioController> logger, IUsuarioRepository usuariosRepo)
+
+    public UsuarioController(ILogger<UsuarioController> logger, IUsuarioRepository usuariosRepo, ITableroRepository tablerosRepo, ITareaRepository tareasRepo)
     {
         _logger = logger;
         _usuariosRepo = usuariosRepo;
+        _tablerosRepo = tablerosRepo;
+        _tareasRepo = tareasRepo;
     }
 
     [HttpGet]
@@ -25,7 +30,7 @@ public class UsuarioController : Controller
         
         try
         {
-            var usuarios = _usuariosRepo.GetAllUsuarios();
+            var usuarios = _usuariosRepo.GetAllUsuarios().Where(usuario => usuario.Id != Convert.ToInt32(HttpContext.Session.GetString("id"))).ToList();
             return View(new MostrarUsuariosViewModel(usuarios));
 
         }catch(Exception ex)
@@ -36,7 +41,8 @@ public class UsuarioController : Controller
     }
 
     [HttpGet]
-    public IActionResult CrearUsuario(){
+    public IActionResult CrearUsuario()
+    {
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 400. No tiene autorizacion para ingresar a la pagina."});
 
@@ -44,7 +50,8 @@ public class UsuarioController : Controller
     }
 
     [HttpGet]
-    public IActionResult ActualizarUsuario(int idUsuario){
+    public IActionResult ActualizarUsuario(int idUsuario)
+    {
 
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         
@@ -63,7 +70,8 @@ public class UsuarioController : Controller
     }
 
     [HttpPost]
-    public IActionResult CrearUsuario(UsuarioViewModel usuario){
+    public IActionResult CrearUsuario(UsuarioViewModel usuario)
+    {
 
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         
@@ -92,7 +100,8 @@ public class UsuarioController : Controller
     }
 
     [HttpPost]
-    public IActionResult ActualizarUsuario(UsuarioViewModel usuario){
+    public IActionResult ActualizarUsuario(UsuarioViewModel usuario)
+    {
         if(String.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         
         if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
@@ -107,7 +116,7 @@ public class UsuarioController : Controller
                 TempData["UsuarioExistente"] = "Ya existe un usuario con ese nombre. Por favor, elija otro nombre de usuario.";
                 return RedirectToAction("ActualizarUsuario", new{idUsuario = usuario.Id});
             }
-            _usuariosRepo.ModificarUsuario(usuarioAModificar);
+            _usuariosRepo.ActualizarUsuario(usuarioAModificar);
             return RedirectToAction("ListarUsuarios");
 
         }catch(Exception ex)
@@ -117,14 +126,23 @@ public class UsuarioController : Controller
         }
     }
 
-    public IActionResult EliminarUsuario(int idUsuario){
+    public IActionResult EliminarUsuario(int idUsuario)
+    {
         
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return RedirectToRoute(new{controller="Logueo", action="Index"});
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 400. No tiene autorizacion para eliminar un usuario."});
 
         try
         {
+            var tableros = _tablerosRepo.GetTablerosDeUsuario(idUsuario);
+            foreach(var tablero in tableros)
+            {
+                var tareasTablero = _tareasRepo.GetTareasDeTablero(tablero.Id);
+                foreach(var tarea in tareasTablero) _tareasRepo.EliminarTarea(tarea.Id);
+                _tablerosRepo.EliminarTablero(tablero.Id);
+            }
+            _tareasRepo.DesasignarTareas(idUsuario);
             _usuariosRepo.EliminarUsuario(idUsuario);
             return RedirectToAction("ListarUsuarios");
 
