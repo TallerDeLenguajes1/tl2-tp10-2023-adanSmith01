@@ -10,12 +10,14 @@ public class TableroController: Controller
     private readonly ILogger<TableroController> _logger;
     private readonly ITableroRepository _tablerosRepo;
     private readonly IUsuarioRepository _usuariosRepo;
+    private readonly ITareaRepository _tareasRepo;
 
-    public TableroController(ILogger<TableroController> logger, ITableroRepository tablerosRepo, IUsuarioRepository usuariosRepo)
+    public TableroController(ILogger<TableroController> logger, ITableroRepository tablerosRepo, IUsuarioRepository usuariosRepo, ITareaRepository tareasRepo)
     {
         _logger = logger;
         _tablerosRepo = tablerosRepo;
         _usuariosRepo = usuariosRepo;
+        _tareasRepo = tareasRepo;
     }
 
     [HttpGet]
@@ -49,7 +51,7 @@ public class TableroController: Controller
                 if(idUsuarioPropietario == null)
                 {
                     var usuariosPropietarios = _usuariosRepo.GetAllUsuarios();
-                    var tablerosUsuarios = _tablerosRepo.GetAllTableros();
+                    var tablerosUsuarios = _tablerosRepo.GetAllTableros().Where(tablero => tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))).ToList();
                     return View(new ListaTablerosUsuarioViewModel(tablerosUsuarios, usuariosPropietarios));
                 }
                 else
@@ -104,7 +106,7 @@ public class TableroController: Controller
         }catch(Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return RedirectToAction("Error");
+            return RedirectToAction("Views/Shared/Error.cshtml", new ErrorViewModel{message = ex.Message});
         }
     }
 
@@ -165,10 +167,13 @@ public class TableroController: Controller
         {
             var IdUsuarioPropietario = _tablerosRepo.GetTablero(idTablero).IdUsuarioPropietario;
             if(rolUsuarioAutenticado != Rol.Administrador.ToString() && IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para eliminar el tablero de otro usuario."});
+            
+            foreach(var tarea in _tareasRepo.GetTareasDeTablero(idTablero)) _tareasRepo.EliminarTarea(tarea.Id);
             _tablerosRepo.EliminarTablero(idTablero);
+            
             if(IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTablerosUsuario");
 
-            return RedirectToAction("ListarTableros");
+            return RedirectToAction("MisTableros");
 
         }catch(Exception ex)
         {
