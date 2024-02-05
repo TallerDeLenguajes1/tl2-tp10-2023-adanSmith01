@@ -179,9 +179,11 @@ public class TableroRepository: ITableroRepository
         {
             connection.Open();
             
-            string queryString = @"SELECT * FROM Tablero WHERE id_usuario_propietario = @idPropietario;";
+            string queryString = @"SELECT * FROM Tablero
+                                   WHERE id_usuario_propietario = @idPropietario AND activo = @activo;";
             var command = new SQLiteCommand(queryString, connection);
             command.Parameters.Add(new SQLiteParameter("@idPropietario", idUsuario));
+            command.Parameters.Add(new SQLiteParameter("@activo", 1));
 
             using(var reader = command.ExecuteReader())
             {
@@ -270,11 +272,12 @@ public class TableroRepository: ITableroRepository
         {
 
             connection.Open();
-            string queryString = @"UPDATE Tablero SET activo = @inactivo
+            string queryString = @"UPDATE Tablero 
+                                   SET activo = @inactivo
                                    WHERE id = @idTablero AND activo = @activo
             ;";
             var command = new SQLiteCommand(queryString, connection);
-            command.Parameters.Add(new SQLiteParameter("@inactivo", 0));
+            command.Parameters.Add(new SQLiteParameter("@inactivo", -1));
             command.Parameters.Add(new SQLiteParameter("@idTablero", idTablero));
             command.Parameters.Add(new SQLiteParameter("@activo", 1));
 
