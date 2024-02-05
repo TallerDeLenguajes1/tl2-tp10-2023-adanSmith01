@@ -70,7 +70,7 @@ public class UsuarioRepository: IUsuarioRepository
         }
     }
 
-    public void ModificarUsuario(Usuario usuario)
+    public void ActualizarUsuario(Usuario usuario)
     {
         var connection = new SQLiteConnection(_connectionString);
         try
@@ -113,8 +113,10 @@ public class UsuarioRepository: IUsuarioRepository
         {
             connection.Open();
             string queryString = @"SELECT id, nombre_de_usuario, rol FROM Usuario
-                                  WHERE Activo = 1;";
+                                  WHERE activo = @activo
+            ;";
             var command = new SQLiteCommand(queryString, connection);
+            command.Parameters.Add(new SQLiteParameter("@activo", 1));
 
             using(var reader = command.ExecuteReader())
             {
@@ -240,10 +242,12 @@ public class UsuarioRepository: IUsuarioRepository
         try
         {
             connection.Open();
-            string queryString = @"UPDATE Usuario SET activo = 0
-                                  WHERE id = @idUsuario AND activo = 1;";
+            string queryString = @"UPDATE Usuario SET activo = @inactivo
+                                  WHERE id = @idUsuario AND activo = @activo;";
             var command = new SQLiteCommand(queryString, connection);
+            command.Parameters.Add(new SQLiteParameter("@inactivo", -1));
             command.Parameters.Add(new SQLiteParameter("@idUsuario", idUsuario));
+            command.Parameters.Add(new SQLiteParameter("@activo", 1));
             
             command.ExecuteNonQuery();
 

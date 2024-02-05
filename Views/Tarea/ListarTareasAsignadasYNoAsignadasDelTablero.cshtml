@@ -1,0 +1,64 @@
+@model tl2_tp10_2023_adanSmith01.ViewModels.ListaTareasAsignadasYNoAsignadasViewModel
+
+@{ViewData["title"]="Tareas del usuario";}
+
+<h1 class="text-center">
+    Tareas del tablero <em><mark>"@Model.TableroCTA.Nombre"</mark></em>
+</h1>
+
+<section>
+    
+    <article>
+        @if(!Model.TareasAsignadasYNoAsignadas.Any())
+        {
+            <p><strong>NO HAY TAREAS ASIGNADAS REGISTRADAS PARA ESTE TABLERO</strong></p>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Descripcion</th>
+                        <th scope="col">Color</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Usuario asignado</th>
+                        <th scope="col">Operacion</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    @foreach(var tarea in Model.TareasAsignadasYNoAsignadas)
+                    {
+                        <td>@tarea.Nombre</td>
+                        <td>@tarea.Descripcion</td>
+
+                        @if(string.IsNullOrEmpty(tarea.Color)){
+                            <td style="background-color: ffffff;"></td>
+                        }else{
+                            <td style="background-color:@tarea.Color;"></td>
+                        }
+
+                        <td>@tarea.Estado.ToString()</td>
+
+                        @if(tarea.IdUsuarioAsignado == null){
+                            <td>N/A</td>
+                            <td>N/A</td>
+                        }
+                        else{
+                            <td>@Model.UsuarioAsignado.Nombre</td>
+                            <td>
+                                <form asp-controller="Tarea" asp-action="ActualizarEstado" method="post">
+                                    <select name="estadoNuevo" asp-items = "@Html.GetEnumSelectList<EstadoTarea>()">
+                                    </select>
+                                    <input hidden name="idTarea" value="@tarea.Id">
+                                    <input type="submit" value="Modificar estado">
+                                </form>
+                            </td>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+    </article>
+    
+</section>
