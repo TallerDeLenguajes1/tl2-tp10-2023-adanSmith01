@@ -12,6 +12,9 @@ optimizar el flujo de trabajo, controlar tareas y facilitar la colaboración en 
 - Para incorporar librerias relacionadas a la variable de sesión: `Microsoft.AspNetCore.Session`
 - Para encriptación de contraseñas de usuario: `System.Encrypt.Net.Text`
 
+## API usada
+- RoboHash (para fotos de perfil de usuarios): https://robohash.org/
+
 ## Usuarios registrados para autenticación
 - Como usuario Administrador
 
