@@ -20,7 +20,6 @@ public class UsuarioViewModel
     [MinLength(8, ErrorMessage = "Como minimo 8 caracteres")]
     public string Contrasenia { get => contrasenia; set => contrasenia = value; }
 
-    [Required(ErrorMessage = "Este campo es requerido")]
     [Display(Name = "Rol del usuario")]
     public Rol Rol { get => rol; set => rol = value; }
 
