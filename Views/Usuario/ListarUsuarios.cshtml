@@ -2,51 +2,51 @@
 
 @{ ViewData["Title"] = "Usuarios"; }
 
-<section class="content-view">
-    <h1 class="text-center title-view">Usuarios</h1>
-    <a asp-controller="Usuario" asp-action="CrearUsuario" class="btn btn-outline-success btn-add">+ Añadir usuario</a>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Nombre</th>
-                <th scope="col">Rol</th>
-                <th scope="col">Modificar usuario</th>
-                <th scope="col">Eliminar usuario</th>
-                <th scope="col">Tableros</th>
-            </tr>
-        </thead>
-        <tbody class="table-group-divider">
-            @foreach (var usuario in Model.ListaUsuariosVM)
-            {
-                <tr>
-                    <td>@usuario.Nombre</td>
-                    <td>@usuario.Rol.ToString()</td>
-                    <td>
+<h1 class="text-center title-view">Usuarios registrados</h1>
+<a asp-controller="Usuario" asp-action="CrearUsuario" class="btn btn-outline-success btn-add" title="Añadir usuario">+ Añadir usuario</a>
+<section class="usuario-view">
+    @if(!Model.ListaUsuariosVM.Any())
+    {
+        <article>
+            <p><strong>NO HAY USUARIOS REGISTRADOS</strong></p>
+        </article>
+    }
+    else
+    {
+        @foreach(var usuario in Model.ListaUsuariosVM)
+        {
+            <article>
+                <figure>
+                    <img src="https://robohash.org/{@usuario.Nombre}.png?set=set1" alt="Imagen de perfil de un robot animado">
+                </figure>
+                <section>
+                    <h2>@usuario.Nombre</h2>
+                    <p><strong>Rol de usuario: </strong>@usuario.Rol.ToString()</p>
+                    <section class="btn-actions">
                         <a asp-controller="Usuario" asp-action="ActualizarUsuario" asp-route-idUsuario = "@usuario.Id" class="btn btn-outline-info" title="Actualizar usuario">Actualizar
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
                             </svg>
                         </a>
-                    </td>
-                    <td>
                         <a asp-controller="Usuario" asp-action="EliminarUsuario" asp-route-idUsuario = "@usuario.Id" class="btn btn-outline-danger" onclick="return confirm('¿Estas seguro de eliminar al usuario seleccionado?')" title="Eliminar usuario">Eliminar
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                             <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
                             <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
                             </svg>
                         </a>
-                    </td>
-                    <td>
-                        <a asp-controller="Tablero" asp-action="ListarTablerosUsuario" asp-route-idUsuarioPropietario = "@usuario.Id" class="btn btn-outline-dark" title="Ver tableros del usuario">Ver
+                        <a asp-controller="Tablero" asp-action="ListarTablerosUsuario" asp-route-idUsuarioPropietario = "@usuario.Id" class="btn btn-outline-light" title="Ver tableros del usuario">Ver
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
                             <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
                             <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
                             </svg>
                         </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                    </section>
+                </section>
+            </article>
+        }
+    }
+    
 </section>
+
+<script src="../js/site.js"></script>

@@ -2,11 +2,11 @@
 
 @{ViewData["title"]="Actualizar tablero";}
 
-<h2 class="text-center">Actualizar tablero</h2>
 
 <section>
     <article>
-        <form asp-controller = "Tablero" asp-action="ActualizarTablero" method="post" class="form-view">
+        <form asp-controller = "Tablero" asp-action="ActualizarTablero" method="post" class="form-crear-actualizar">
+            <h1 class="title-form">Actualizar tablero</h1>
             <section class="mb-3">
                 <label asp-for="@Model.Tablero.Nombre" class="form-label"></label>
                 <input asp-for = "@Model.Tablero.Nombre" value="@Model.Tablero.Nombre" class="form-control">
@@ -22,7 +22,7 @@
             </section>
             <input hidden asp-for="@Model.Tablero.IdUsuarioPropietario" value="@Model.Usuario.Id">
             <input hidden asp-for="@Model.Tablero.Id">
-            <input type="submit" class="btn btn-outline-success" value="Confirmar">
+            <input type="submit" value="Confirmar" class="btn btn-outline-success">
         </form>
     </article>
 </section>

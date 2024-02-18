@@ -3,8 +3,8 @@
 @{ViewData["title"]="Actualizar tarea";}
 
 <section>
-    <h1 class="text-center">Actualizar tarea</h1>
-    <form asp-controller="Tarea" asp-action="ActualizarTarea" method="post" class="form-view" onchange="getColor()">
+    <form asp-controller="Tarea" asp-action="ActualizarTarea" method="post" class="form-crear-actualizar" onchange="getColor()">
+        <h1 class="title-form">Actualizar tarea</h1>
         <section class="mb-3">
             <label asp-for="@Model.Tarea.Nombre" class="form-label"></label>
             <input asp-for="@Model.Tarea.Nombre" value="@Model.Tarea.Nombre" class="form-control">
