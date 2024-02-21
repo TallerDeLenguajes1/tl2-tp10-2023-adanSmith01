@@ -12,7 +12,7 @@
         </section>
         <section class="mb-3">
             <label asp-for="@Model.Tarea.Descripcion" class="form-label"></label>
-            <input asp-for="@Model.Tarea.Descripcion" value="@Model.Tarea.Descripcion" class="form-control">
+            @Html.TextAreaFor(Model => Model.Tarea.Descripcion, new { @class = "form-control" })
         </section>
         <section class="mb-3">
             <label asp-for="@Model.Tarea.Color" class="form-label"></label>
@@ -23,7 +23,6 @@
             <label asp-for="@Model.Tarea.Estado" class="form-label"></label>
             <select asp-for="@Model.Tarea.Estado" asp-items="@Html.GetEnumSelectList<EstadoTarea>()" class="form-select" aria-label="Default select example">
             </select>
-            <span asp-validation-for="@Model.Tarea.Estado" class="text-danger"></span>
         </section>
         <section class="mb-3">
             <label asp-for="@Model.Tarea.IdUsuarioAsignado" class="form-label">Asignar usuario</label>

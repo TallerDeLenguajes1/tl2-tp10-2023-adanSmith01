@@ -2,116 +2,81 @@
 
 @{ViewData["Title"] = "Mis Tableros";}
 
-<h1 class="text-center"> 
+<h1 class="text-center title-view"> 
     Mis tableros 
 </h1>
 
-<section>
+<section class="tableros-view" id="mis-tableros">
     <a asp-controller="Tablero" asp-action="CrearTablero" class="btn btn-outline-success btn-add" title="Crear tablero">+ Añadir tablero</a>
-
-    <article>
-
-        @if(!Model.TablerosPropios.Any())
+    @if(!Model.TablerosPropios.Any())
+    {
+        <article>
+            <p><strong>NO HAY TABLEROS REGISTRADOS</strong></p>
+        </article>
+    }
+    else
+    {
+        @foreach(var tableroPropio in Model.TablerosPropios)
         {
             <article>
-                <p>NO HAY TABLEROS REGISTRADOS</p>
+                <h2>@tableroPropio.Nombre</h2>
+                <p>@tableroPropio.Descripcion</p>
+                <section class="btn-actions">
+                    <a asp-controller="Tablero" asp-action="ActualizarTablero" asp-route-idTablero = "@tableroPropio.Id" class="btn btn-outline-info" title="Actualizar tablero">Actualizar
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                        </svg>
+                    </a>
+                    <a asp-controller="Tablero" asp-action="EliminarTablero" asp-route-idTablero = "@tableroPropio.Id" class="btn btn-outline-danger" onclick="return confirm('¿Estas seguro de eliminar el tablero seleccionado?')" title="Eliminar tablero">Eliminar
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
+                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+                        </svg>
+                    </a>
+                    <a asp-controller="Tarea" asp-action="ListarTareasTablero" asp-route-idTablero = "@tableroPropio.Id" class="btn btn-outline-dark" title="Ver tareas del tablero">Ver
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                        <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                        </svg>
+                    </a>
+                </section>
             </article>
         }
-        else
-        {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Descripcion</th>
-                        <th scope="col" colspan="4">Operaciones</th>
-                    </tr>
-                </thead>
-                <tbody class="table-group-divider">
-                    @foreach(var tableroPropio in Model.TablerosPropios)
-                    {
-                        <tr>
-                            <td>@tableroPropio.Nombre</td>
-                            <td>@tableroPropio.Descripcion</td>
-                            <td>
-                                <a asp-controller="Tarea" asp-action="CrearTarea" asp-route-idTablero="@tableroPropio.Id">+ Crear tarea</a>
-                            </td>
-                            <td>
-                                    <a asp-controller="Tablero" asp-action="ActualizarTablero" asp-route-idTablero = "@tableroPropio.Id" class="btn btn-outline-info" title="Actualizar tablero">Actualizar
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                                        </svg>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a asp-controller="Tablero" asp-action="EliminarTablero" asp-route-idTablero = "@tableroPropio.Id" class="btn btn-outline-danger" onclick="return confirm('¿Estas seguro de eliminar el tablero seleccionado?')" title="Eliminar tablero">Eliminar
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
-                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
-                                        </svg>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a asp-controller="Tarea" asp-action="ListarTareasTablero" asp-route-idTablero = "@tableroPropio.Id" class="btn btn-outline-dark" title="Ver tareas del tablero">Ver
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
-                                        <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
-                                        </svg>
-                                    </a>
-                                </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    </article>
+    }
 </section>
 
-<section>
-    <h2 class="text-center">
-        Tableros con tareas asignadas
-    </h2>
-
-    <article>
-        @if(!Model.TablerosConTareasAsignadas.Any())
+<section class="tableros-view" id="tablerosCTA">
+    <h2 class="text-center">Tableros con tareas asignadas</h2>
+    @if(!Model.TablerosConTareasAsignadas.Any())
+    {
+        <article>
+            <p><strong>NO HAY TABLEROS QUE CONTENGAN TAREAS ASIGNADAS PARA TI</strong></p>
+        </article>
+    }
+    else
+    {
+        @foreach(var tablero in Model.TablerosConTareasAsignadas)
         {
-            <p><strong>NO HAY TABLEROS CON TAREAS ASIGNADAS</strong></p>
+            @foreach(var usuario in Model.UsuariosPropietarios)
+            {
+                if(usuario.Id == tablero.IdUsuarioPropietario)
+                {
+                    <article>
+                        <h2>@tablero.Nombre</h2>
+                        <p>@tablero.Descripcion</p>
+                        <p><strong>Propietario: </strong>@usuario.Nombre (@usuario.Rol)</p>
+                        <a asp-controller="Tarea" asp-action="ListarTareasAsignadasYNoAsignadasDelTablero" asp-route-idTablero = "@tablero.Id" class="btn btn-outline-dark" title="Ver tareas del tablero">Ver
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+                            </svg>
+                        </a>
+                    </article>
+                    break;
+                }
+            }
         }
-        else
-        {
-            <table>
-                <thead>
-                    <tr>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Descripcion</th>
-                        <th scope="col">Propietario/a</th>
-                        <th scope="col">Rol</th>
-                        <th scope="col">Operacion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach(var tablero in Model.TablerosConTareasAsignadas)
-                    {
-                        foreach(var usuario in Model.UsuariosPropietarios)
-                        {
-                            if(usuario.Id == tablero.IdUsuarioPropietario)
-                            {
-                                <tr>
-                                    <td>@tablero.Nombre</td>
-                                    <td>@tablero.Descripcion</td>
-                                    <td>@usuario.Nombre</td>
-                                    <td>@usuario.Rol</td>
-                                    <td>
-                                        <a asp-controller="Tarea" asp-action="ListarTareasAsignadasYNoAsignadasDelTablero" asp-route-idTablero="@tablero.Id">Ver tareas</a>
-                                    </td>
-                                </tr>
-                                break;
-                            }
-                        }
-                    }
-                </tbody>
-            </table>
-        }
-    </article>
+    }
 </section>
+    

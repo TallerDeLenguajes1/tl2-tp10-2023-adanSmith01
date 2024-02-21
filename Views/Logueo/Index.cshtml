@@ -2,7 +2,7 @@
 
 @{ViewData["Title"]="Iniciar sesion";}
 
-@if(TempData.ContainsKey("MensajeError")){<section><article><p>@TempData["MensajeError"]</p></article></section>}
+@if(TempData.ContainsKey("MensajeError")){<section class="mensaje-error"><article><p>@TempData["MensajeError"]</p></article></section>}
 
 <section>
     <article>

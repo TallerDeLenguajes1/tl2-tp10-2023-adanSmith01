@@ -14,7 +14,7 @@
             </section>
             <section class="mb-3">
                 <label asp-for="@Model.Tablero.Descripcion" class="form-label"></label>
-                <input asp-for = "@Model.Tablero.Descripcion" value="@Model.Tablero.Descripcion" class="form-control">
+                @Html.TextAreaFor(Model => Model.Tablero.Descripcion, new { @class = "form-control" })
             </section>
             <section class="mb-3">
                 <label asp-for="@Model.Usuario.Id" class="form-label">Nombre del propietario</label>

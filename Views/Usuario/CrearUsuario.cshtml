@@ -2,7 +2,7 @@
 
 @{ViewData["title"]="Crear usuario";}
 
-@if(TempData.ContainsKey("UsuarioExistente")){<section><article><p>@TempData["UsuarioExistente"]</p></article></section>}
+@if(TempData.ContainsKey("UsuarioExistente")){<section class="mensaje-error"><article><p>@TempData["UsuarioExistente"]</p></article></section>}
 
 <section>
     <article>

@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="icon"  href="favicons/favicon-kanban.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="../favicons/favicon-kanban.ico">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/tl2_tp10_2023_adanSmith01.styles.css" asp-append-version="true" />
+    <script src="../js/site.js"></script>
 </head>
 <body>
     <header>
@@ -37,11 +38,18 @@
                             </li>
                             if(Context.Session.GetString("rol") == Rol.Administrador.ToString())
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Usuario" asp-action="ListarUsuarios">Gestion usuarios</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Tablero" asp-action="ListarTablerosUsuario" asp-route-value="All">Gestión tableros</a>
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Gestión
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-area="" asp-controller="Usuario" asp-action="ListarUsuarios">De usuarios</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-area="" asp-controller="Tablero" asp-action="ListarTablerosUsuario" asp-route-value="All">De tableros</a>
+                                        </li> 
+                                    </ul>
                                 </li>
                             }
                             <li class="nav-item">

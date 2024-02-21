@@ -2,81 +2,86 @@
 
 @{ViewData["title"]="Tareas del usuario";}
 
-<h1 class="text-center">
-    Tareas del tablero <em><mark>"@Model.Tablero.Nombre"</mark></em>
+<h1 class="text-center title-view">
+    Tareas del tablero "@Model.Tablero.Nombre"
 </h1>
 
-<section>
-    <article>
-        @if(!Model.TareasTablero.Any())
+<section class="tablero">
+    @foreach(var tareasPorEstado in Model.TareasTableroPorEstado)
+    {
+        <section class="estado-tarea" id="@tareasPorEstado.Key">
+            <div>
+                <h2>
+                    @tareasPorEstado.Key.ToString()
+                </h2>
+                @if(Model.HabilitarCrearTarea)
+                {
+                    <a asp-controller="Tarea" asp-action="CrearTarea" asp-route-idTablero="@Model.Tablero.Id" asp-route-estado = "@tareasPorEstado.Key" title="Crear tarea de estado @tareasPorEstado.Key">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                        </svg>
+                    </a>
+                }
+            </div>
+            @foreach(var tarea in tareasPorEstado.Value)
+            {
+                if(Convert.ToInt32(tarea.Color[1..], 16) >= Convert.ToInt32("e0e0e0", 16) && Convert.ToInt32(tarea.Color[1..], 16) <= Convert.ToInt32("ffffff", 16))
+                {
+                    <button style="background-color:@tarea.Color; color: black;" type="button" data-bs-toggle="modal" data-bs-target="#infoTarea-@tarea.Id">@tarea.Nombre</button>
+                }
+                else
+                {
+                    <button style="background-color:@tarea.Color"type="button" data-bs-toggle="modal" data-bs-target="#infoTarea-@tarea.Id">@tarea.Nombre</button>
+                }
+            }
+        </section>
+        @foreach(var tarea in tareasPorEstado.Value)
         {
-            <p><strong>NO HAY TAREAS REGISTRADAS PARA ESTE TABLERO</strong></p>
-        }
-        else
-        {
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Descripcion</th>
-                        <th scope="col">Color</th>
-                        <th scope="col">Estado</th>
-                        <th scope="col">Usuario asignado</th>
-                        <th scope="col">Rol</th>
-                        <th scope="col" colspan="2">Operaciones</th>
-                    </tr>
-                </thead>
-                <tbody class="table-group-divider">
-                    @foreach(var tarea in Model.TareasTablero)
-                    {
-                        <tr>
-
-                            <td>@tarea.Nombre</td>
-                            <td>@tarea.Descripcion</td>
-
-                            @if(string.IsNullOrEmpty(tarea.Color)){
-                                <td style="background-color: ffffff;"></td>
-                            }else{
-                                <td style="background-color:@tarea.Color;"></td>
-                            }
-
-                            <td>@tarea.Estado.ToString()</td>
-
-                            @if(tarea.IdUsuarioAsignado == null){
-                                <td>N/A</td>
-                                <td>N/A</td>
-                            }else{
-                                @foreach(var usuario in Model.Usuarios){
-                                    if(usuario.Id == tarea.IdUsuarioAsignado){
-                                        <td>@usuario.Nombre</td>
-                                        <td>@usuario.Rol</td>
-                                        break;
+            <div class="modal" id="infoTarea-@tarea.Id" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                    <p class="modal-title"><strong>Información de la tarea</strong></p>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <article class="modal-body">
+                                <p><strong>Nombre: </strong>@tarea.Nombre</p>
+                                <p><strong>Descripción: </strong>@tarea.Descripcion</p>
+                                @if(tarea.IdUsuarioAsignado == null)
+                                {
+                                    <p>Esta tarea no está asignada a ningún usuario</p>
+                                }else{
+                                    @foreach(var usuario in Model.Usuarios)
+                                    {
+                                        if(usuario.Id == tarea.IdUsuarioAsignado)
+                                        {
+                                            <p><strong>Asignada a: </strong>@usuario.Nombre (@usuario.Rol)</p>
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-
-                            <td>
+                            </article>
+                            <section class="modal-footer">
                                 <a asp-controller="Tarea" asp-action="ActualizarTarea" asp-route-idTarea = "@tarea.Id" class="btn btn-outline-info" title="Actualizar tarea">Actualizar
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                     <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                     <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
                                     </svg>
                                 </a>
-                            </td>
-
-                            <td>
                                 <a asp-controller="Tarea" asp-action="EliminarTarea" asp-route-idTarea = "@tarea.Id" class="btn btn-outline-danger" onclick="return confirm('¿Estas seguro de eliminar la tarea seleccionada?')" title="Eliminar tarea">Eliminar
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
                                     <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
                                     </svg>
                                 </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                            </section> 
+                        </div>
+                    </div>
+                </div>
         }
-    </article>
-    
+    }
 </section>
+
+
+           

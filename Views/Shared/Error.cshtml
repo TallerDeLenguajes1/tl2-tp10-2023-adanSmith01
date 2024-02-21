@@ -3,6 +3,9 @@
     ViewData["Title"] = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
-<h2 class="text-danger">Motivo: @Model.message</h2>
+<section class="mensaje-error">
+    <article>
+        <p>Error.</p>
+        <p>@Model.message</p>
+    </article>
+</section>
