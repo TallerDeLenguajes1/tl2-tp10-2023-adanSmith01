@@ -17,19 +17,20 @@ public class TareaViewModel
 
     [Required(ErrorMessage = "Este campo es requerido")]
     [Display(Name = "Nombre de la tarea")]
+    [StringLength(50)]
     public string Nombre { get => nombre; set => nombre = value; }
 
     [Display(Name = "Descripción de la tarea")]
+    [StringLength(200)]
     public string Descripcion { get => descripcion; set => descripcion = value; }
 
     [Display(Name = "Color de la tarea")]
     public string Color { get => color; set => color = value; }
 
-    [Required(ErrorMessage = "No puede haber tarea sin estado")]
     [Display(Name = "Estado de la tarea")]
     public EstadoTarea Estado { get => estado; set => estado = value; }
 
-    [Display(Name = "Usuario a asignar")]
+    [Display(Name = "Asignar a: ")]
     public int? IdUsuarioAsignado { get => idUsuarioAsignado; set => idUsuarioAsignado = value; }
 
     public TareaViewModel(Tarea tarea){
@@ -42,7 +43,5 @@ public class TareaViewModel
         this.idUsuarioAsignado = tarea.IdUsuarioAsignado;
     }
 
-    public TareaViewModel(){
-
-    }
+    public TareaViewModel(){}
 }
