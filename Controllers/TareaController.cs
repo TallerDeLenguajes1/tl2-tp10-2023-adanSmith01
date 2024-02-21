@@ -32,10 +32,26 @@ public class TareaController : Controller
             var tablero = _tablerosRepo.GetTablero(idTablero);
             var usuarioPropietario = _usuariosRepo.GetUsuario(tablero.IdUsuarioPropietario);
             var usuariosAsignados = _usuariosRepo.GetAllUsuarios();
-            var tareasTablero = _tareasRepo.GetTareasDeTablero(tablero.Id);
+            var tareasTableroPorEstado = new Dictionary<EstadoTarea, List<Tarea>>();
+            foreach(var estado in (EstadoTarea[])Enum.GetValues(typeof(EstadoTarea)))
+            {
+                var tareasTablero = _tareasRepo.GetTareasDelTablero(tablero.Id, estado);
+                tareasTableroPorEstado.Add(estado, tareasTablero);
+            }
 
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && usuarioPropietario.Id != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para ver las tareas del tablero de otro usuario."});
-            return View(new ListaTareasTableroViewModel(tablero, tareasTablero, usuariosAsignados));
+            if(usuarioPropietario.Id != Convert.ToInt32(HttpContext.Session.GetString("id")))
+            {
+                if(rolUsuarioAutenticado == Rol.Administrador.ToString())
+                {
+                    return View(new ListaTareasTableroViewModel(tablero, tareasTableroPorEstado, usuariosAsignados, false));
+                }
+                else
+                {
+                    return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 401. No tiene autorización para ver las tareas del tablero de otro usuario."});
+                }
+            }
+                
+            return View(new ListaTareasTableroViewModel(tablero, tareasTableroPorEstado, usuariosAsignados, true));
         }
         catch(Exception ex)
         {
@@ -55,12 +71,20 @@ public class TareaController : Controller
         {
             var tablero = _tablerosRepo.GetTablero(idTablero);
             var usuarioCTA = _usuariosRepo.GetUsuario(Convert.ToInt32(HttpContext.Session.GetString("id")));
-            var tareasTableroCTA = _tareasRepo.GetTareasAsignadasAlUsuario(idTablero, Convert.ToInt32(HttpContext.Session.GetString("id")));
-
-            if(tareasTableroCTA.Any())
+            var tareasTableroCTA = new Dictionary<EstadoTarea, List<Tarea>>();
+            foreach(var estado in (EstadoTarea[])Enum.GetValues(typeof(EstadoTarea)))
             {
-                var tareasNoAsignadas = _tareasRepo.GetTareasNoAsignadasDelTablero(idTablero);
-                tareasTableroCTA.AddRange(tareasNoAsignadas);
+                var tareasTablero = _tareasRepo.GetTareasAsignadasAlUsuario(tablero.Id, usuarioCTA.Id, estado);
+                tareasTableroCTA.Add(estado, tareasTablero);
+            }
+
+            if(tareasTableroCTA.Values.Any(lista => lista.Any()))
+            {
+                foreach(var estado in (EstadoTarea[])Enum.GetValues(typeof(EstadoTarea)))
+                {
+                    var tareasNoAsignadas = _tareasRepo.GetTareasNoAsignadasDelTablero(idTablero, estado);
+                    tareasTableroCTA[estado].AddRange(tareasNoAsignadas);
+                }
                 return View(new ListaTareasAsignadasYNoAsignadasViewModel(tablero, tareasTableroCTA, usuarioCTA));
             }
             else
@@ -77,7 +101,7 @@ public class TareaController : Controller
     }
     
     [HttpGet]
-    public IActionResult CrearTarea(int idTablero)
+    public IActionResult CrearTarea(int idTablero, EstadoTarea estado)
     {
         
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
@@ -86,8 +110,8 @@ public class TareaController : Controller
         {
             var tablero = _tablerosRepo.GetTablero(idTablero);
             var usuarios = _usuariosRepo.GetAllUsuarios();
-            if(tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Error");
-            return View(new TareaTableroUsuariosViewModel(usuarios, idTablero));
+            if(tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No puede crear una tarea en un tablero del que no es propietario."});
+            return View(new TareaTableroUsuariosViewModel(usuarios, idTablero, estado));
 
         }catch(Exception ex)
         {
@@ -107,7 +131,7 @@ public class TareaController : Controller
         {            
             var tarea = _tareasRepo.GetTarea(idTarea);
             var tablero = _tablerosRepo.GetTablero(tarea.IdTablero);
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para actualizar la tarea del tablero de otro usuario."});
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No puede actualizar la tarea del tablero de otro usuario."});
             var usuarios = _usuariosRepo.GetAllUsuarios();
             return View(new TareaTableroUsuariosViewModel(tarea, usuarios));
 
@@ -156,7 +180,7 @@ public class TareaController : Controller
         try
         {   
             var tablero = _tablerosRepo.GetTablero(tareaTU.IdTablero);
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para actualizar la tarea del tablero de otro usuario."});
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 401. No tiene autorización para actualizar la tarea del tablero de otro usuario."});
          
             var tareaActualizada = new Tarea(tareaTU.Tarea);
             _tareasRepo.ModificarTarea(tareaActualizada);
@@ -196,7 +220,7 @@ public class TareaController : Controller
         {            
             var id = _tareasRepo.GetTarea(idTarea).IdTablero;
             var tablero = _tablerosRepo.GetTablero(id);
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para eliminar la tarea del tablero de otro usuario."});
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 401. No tiene autorización para eliminar la tarea del tablero de otro usuario."});
 
             _tareasRepo.EliminarTarea(idTarea);
             return RedirectToAction("ListarTareasTablero", new{idTablero = id});
