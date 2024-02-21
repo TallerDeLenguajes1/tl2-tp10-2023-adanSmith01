@@ -11,9 +11,10 @@ public class TareaTableroUsuariosViewModel
     public TareaViewModel Tarea { get => tarea; set => tarea = value; }
     public List<UsuarioViewModel> Usuarios { get => usuarios; set => usuarios = value; }
     
-    public TareaTableroUsuariosViewModel(List<Usuario> usuarios, int idTablero){
+    public TareaTableroUsuariosViewModel(List<Usuario> usuarios, int idTablero, EstadoTarea estado){
         this.usuarios = new List<UsuarioViewModel>();
         foreach(var usuario in usuarios) this.usuarios.Add(new UsuarioViewModel(usuario));
+        this.tarea = new TareaViewModel(){Estado = estado};
         this.idTablero = idTablero;
     }
 
