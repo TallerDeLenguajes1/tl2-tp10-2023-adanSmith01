@@ -12,12 +12,13 @@ public class TableroViewModel
 
     [Required(ErrorMessage = "Este campo es requerido")]
     [Display(Name = "Nombre del tablero")]
+    [StringLength(30)]
     public string Nombre { get => nombre; set => nombre = value; }
 
     [Display(Name = "Descripción del tablero")]
+    [StringLength(200)]
     public string Descripcion { get => descripcion; set => descripcion = value; }
 
-    [Required(ErrorMessage = "No puede existir un tablero sin propietario")]
     [Display(Name = "Usuario Propietario")]
     public int IdUsuarioPropietario { get => idUsuarioPropietario; set => idUsuarioPropietario = value; }
 
