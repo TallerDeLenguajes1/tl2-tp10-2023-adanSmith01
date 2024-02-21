@@ -196,11 +196,16 @@ public class TareaController : Controller
     [HttpPost]
     public IActionResult ActualizarEstado(int idTarea, EstadoTarea estadoNuevo)
     {
+        if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
+
         try
         {
             var tarea = _tareasRepo.GetTarea(idTarea);
-            tarea.Estado = estadoNuevo;
-            _tareasRepo.ModificarTarea(tarea);
+            if(tarea.IdUsuarioAsignado != null && tarea.IdUsuarioAsignado == Convert.ToInt32(HttpContext.Session.GetString("id")))
+            {
+                tarea.Estado = estadoNuevo;
+                _tareasRepo.ModificarTarea(tarea);
+            }
             return RedirectToAction("ListarTareasAsignadasYNoAsignadasDelTablero", new{idTablero = tarea.IdTablero});
         }
         catch(Exception ex)
