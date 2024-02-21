@@ -138,8 +138,7 @@ public class TareaRepository: ITareaRepository
         
     }
 
-
-    public List<Tarea> GetTareasDeTablero(int idTablero)
+    public List<Tarea> GetTareasDelTablero(int idTablero)
     {
         var tareasTablero = new List<Tarea>();
         var connection = new SQLiteConnection(_connectionString);
@@ -181,6 +180,57 @@ public class TareaRepository: ITareaRepository
         catch(Exception ex)
         {
             throw new Exception($"Hubo un problema al encontrar las tareas del tablero especificado. Motivo: {ex.Message}");
+        }
+        finally
+        {
+            connection.Close();
+            connection.Dispose();
+        }
+    }
+
+    public List<Tarea> GetTareasDelTablero(int idTablero, EstadoTarea estado)
+    {
+        var tareasTablero = new List<Tarea>();
+        var connection = new SQLiteConnection(_connectionString);
+        try
+        {
+
+            connection.Open();
+            string queryString = @"SELECT * FROM Tarea 
+                                  WHERE id_tablero = @idTablero AND estado = @estado AND activo = @activo
+            ;";
+            var command = new SQLiteCommand(queryString, connection);
+            command.Parameters.Add(new SQLiteParameter("@idTablero", idTablero));
+            command.Parameters.Add(new SQLiteParameter("@estado", Convert.ToInt32(estado)));
+            command.Parameters.Add(new SQLiteParameter("@activo", 1));
+
+            using(var reader = command.ExecuteReader())
+            {
+                while(reader.Read()){
+                    Tarea tarea = new Tarea
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        IdTablero = Convert.ToInt32(reader["id_tablero"]),
+                        Nombre = reader["nombre"].ToString(),
+                        Estado = (EstadoTarea)Convert.ToInt32(reader["estado"]),
+                        Descripcion = reader["descripcion"].ToString(),
+                        Color = reader["color"].ToString(),
+                        IdUsuarioAsignado = (reader["id_usuario_asignado"] == DBNull.Value) ? null : Convert.ToInt32(reader["id_usuario_asignado"])
+                    };
+                    tareasTablero.Add(tarea);
+                }
+            }
+
+            return tareasTablero;
+
+        }
+        catch(SQLiteException)
+        {
+            throw new Exception("Hubo un problema en la base de datos al encontrar las tareas del tablero y estado especificados.");
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Hubo un problema al encontrar las tareas del tablero y estado especificados. Motivo: {ex.Message}");
         }
         finally
         {
@@ -237,6 +287,57 @@ public class TareaRepository: ITareaRepository
             connection.Dispose();
         }
     }
+
+    public List<Tarea> GetTareasAsignadasAlUsuario(int idTablero, int idUsuario, EstadoTarea estado)
+    {
+        var tareasUsuario = new List<Tarea>();
+        var connection = new SQLiteConnection(_connectionString);
+        try
+        {
+            connection.Open();
+            string queryString = @"SELECT * FROM Tarea 
+                                   WHERE id_usuario_asignado = @idUsuarioAsignado AND id_tablero = @idTablero AND estado = @estado AND activo = @activo";
+            var command = new SQLiteCommand(queryString, connection);
+            command.Parameters.Add(new SQLiteParameter("@idUsuarioAsignado", idUsuario));
+            command.Parameters.Add(new SQLiteParameter("@idTablero", idTablero));
+            command.Parameters.Add(new SQLiteParameter("@estado", Convert.ToInt32(estado)));
+            command.Parameters.Add(new SQLiteParameter("@activo", 1));
+
+            using(var reader = command.ExecuteReader())
+            {
+                while(reader.Read()){
+                    Tarea tarea = new Tarea
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        IdTablero = Convert.ToInt32(reader["id_tablero"]),
+                        Nombre = reader["nombre"].ToString(),
+                        Estado = (EstadoTarea)Convert.ToInt32(reader["estado"]),
+                        Descripcion = reader["descripcion"].ToString(),
+                        Color = reader["color"].ToString(),
+                        IdUsuarioAsignado = Convert.ToInt32(reader["id_usuario_asignado"])
+                    };
+                    tareasUsuario.Add(tarea);
+                }
+            }
+
+            return tareasUsuario;
+
+        }
+        catch(SQLiteException)
+        {
+            throw new Exception("Hubo un problema en la base de datos al encontrar las tareas asignadas al usuario y de estado especificados.");
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Hubo un problema al encontrar las tareas asignadas al usuario y de estado especificados. Motivo: {ex.Message}");
+        }
+        finally
+        {
+            connection.Close();
+            connection.Dispose();
+        }
+    }
+
     public List<Tarea> GetTareasNoAsignadasDelTablero(int idTablero)
     {
         var tareasNoAsignadasTablero = new List<Tarea>();
@@ -278,6 +379,56 @@ public class TareaRepository: ITareaRepository
         catch(Exception ex)
         {
             throw new Exception($"Hubo un problema al encontrar las tareas no asignadas del tablero especificado. Motivo: {ex.Message}");
+        }
+        finally
+        {
+            connection.Close();
+            connection.Dispose();
+        }
+    }
+
+    public List<Tarea> GetTareasNoAsignadasDelTablero(int idTablero, EstadoTarea estado)
+    {
+        var tareasNoAsignadasTablero = new List<Tarea>();
+        var connection = new SQLiteConnection(_connectionString);
+        try
+        {
+
+            connection.Open();
+            string queryString = @"SELECT * FROM Tarea 
+                                   WHERE id_tablero = @idTablero AND id_usuario_asignado IS NULL AND estado = @estado AND activo = @activo
+            ;";
+            var command = new SQLiteCommand(queryString, connection);
+            command.Parameters.Add(new SQLiteParameter("@idTablero", idTablero));
+            command.Parameters.Add(new SQLiteParameter("@estado", Convert.ToInt32(estado)));
+            command.Parameters.Add(new SQLiteParameter("@activo", 1));
+
+            using(var reader = command.ExecuteReader())
+            {
+                while(reader.Read()){
+                    Tarea tarea = new Tarea
+                    {
+                        Id = Convert.ToInt32(reader["id"]),
+                        IdTablero = Convert.ToInt32(reader["id_tablero"]),
+                        Nombre = reader["nombre"].ToString(),
+                        Estado = (EstadoTarea)Convert.ToInt32(reader["estado"]),
+                        Descripcion = reader["descripcion"].ToString(),
+                        Color = reader["color"].ToString(),
+                    };
+                    tareasNoAsignadasTablero.Add(tarea);
+                }
+            }
+
+            return tareasNoAsignadasTablero;
+
+        }
+        catch(SQLiteException)
+        {
+            throw new Exception("Hubo un problema en la base de datos al encontrar las tareas no asignadas del tablero y de estado especificados.");
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Hubo un problema al encontrar las tareas no asignadas del tablero y de estado especificados. Motivo: {ex.Message}");
         }
         finally
         {
