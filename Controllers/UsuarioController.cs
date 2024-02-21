@@ -26,7 +26,7 @@ public class UsuarioController : Controller
     {
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
 
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para ingresar a la pagina."});
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 401. No tiene autorización para ingresar a la página."});
         
         try
         {
@@ -44,7 +44,7 @@ public class UsuarioController : Controller
     public IActionResult CrearUsuario()
     {
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 400. No tiene autorizacion para ingresar a la pagina."});
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 401. No tiene autorización para ingresar a la página."});
 
         return View(new UsuarioViewModel());
     }
@@ -55,7 +55,7 @@ public class UsuarioController : Controller
 
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 400. No tiene autorizacion para ingresar a la pagina."});
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 401. No tiene autorización para ingresar a la página."});
         
         try
         {
@@ -75,7 +75,7 @@ public class UsuarioController : Controller
 
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 400. No tiene autorizacion para ingresar a la pagina."});
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 401. No tiene autorización para ingresar a la página."});
         
         if(!ModelState.IsValid) return RedirectToAction("CrearUsuario");
 
@@ -131,14 +131,14 @@ public class UsuarioController : Controller
         
         if(string.IsNullOrEmpty(HttpContext.Session.GetString("usuario"))) return RedirectToRoute(new{controller="Logueo", action="Index"});
         
-        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 400. No tiene autorizacion para eliminar un usuario."});
+        if(HttpContext.Session.GetString("rol") != Rol.Administrador.ToString()) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message="ERROR 401. No tiene autorización para eliminar un usuario."});
 
         try
         {
             var tableros = _tablerosRepo.GetTablerosDeUsuario(idUsuario);
             foreach(var tablero in tableros)
             {
-                var tareasTablero = _tareasRepo.GetTareasDeTablero(tablero.Id);
+                var tareasTablero = _tareasRepo.GetTareasDelTablero(tablero.Id);
                 foreach(var tarea in tareasTablero) _tareasRepo.EliminarTarea(tarea.Id);
                 _tablerosRepo.EliminarTablero(tablero.Id);
             }
