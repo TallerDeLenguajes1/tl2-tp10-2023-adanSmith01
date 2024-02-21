@@ -31,7 +31,7 @@ public class LogueoController: Controller
             if(usuarioLogueado == null)
             {
                 _logger.LogWarning($"Intento de acceso invalido - Usuario: {logueoUsuario.NombreUsuario} - Clave Ingresada: {logueoUsuario.ContraseniaUsuario}");
-                TempData["MensajeError"] = "Acceso invalido. Ingrese los datos correctos.";
+                TempData["MensajeError"] = "Acceso inválido. Ingrese los datos correctos.";
                 return RedirectToAction("Index");
             }
 
