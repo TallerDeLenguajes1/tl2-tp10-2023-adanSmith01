@@ -77,9 +77,124 @@ form label{
   color:white;
 }
 
+.usuario-view article{
+  background-color: rgb(59, 61, 97);
+  color: white;
+  transition: opacity 1s;
+}
+
+.tableros-view article{
+  text-align: center;
+}
+
+.tableros-view article h2{
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: bold;
+}
+
+.tableros-view article{
+  color: white;
+}
+
+#mis-tableros article{
+  background-color: rgb(64, 89, 198);
+}
+
+#tablerosCTA article{
+  background-color: rgb(0, 117, 78);
+}
+
+#tablerosUsuarios article{
+  background-color: rgb(0, 71, 109);
+}
+
+#tablerosUsuarios section > h2{
+  text-align: center;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-weight: bold;
+}
+
+.estado-tarea{
+  transition: opacity 1s, box-shadow 1s;
+}
+
+.estado-tarea h2{
+  text-align: center;
+  color: white;
+}
+
+.estado-tarea button{
+  font-weight: bolder;
+}
+
+.usuario-view article:hover,.usuario-view article:focus, .tableros-view article:hover, .tableros-view article:focus,
+.estado-tarea:hover, .estado-tarea:focus{
+  opacity: 0.9;
+}
+
+#Ideas{
+  background-color: #258cfb;
+}
+
+#ToDo{
+  background-color: rgb(153, 164, 0);
+}
+
+#Doing{
+  background-color: blueviolet;
+}
+
+#Review{
+  background-color: red;
+}
+
+#Done{
+  background-color: green;
+}
+
+.estado-tarea a{
+  color: white;
+}
+
+.modal-footer form select{
+  font-weight: bolder;
+}
+
+.mensaje-error{
+  background-color: rgb(var(--bs-danger-rgb));
+  color: white;
+  font-weight: bolder;
+}
+
+.dropdown-menu li{
+  transition: background-color 1s;
+}
+
+.dropdown-menu li:hover, .dropdown-menu li:focus{
+  background-color: gray;
+}
+
+.dropdown-menu .nav-item .nav-link{
+  transition: color 1s;
+}
+
+.dropdown-menu .nav-item .nav-link:hover, .dropdown-menu .nav-item .nav-link:focus{
+  color: white;
+}
+
+
 @media all and (min-width:320px)
 {
-  .title-view{
+  .dropdown-menu{
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .dropdown-menu li{
+    padding-left: 1em;
+  }
+
+  .title-view, #tablerosUsuarios section > h2{
     margin-top: 1em;
   }
 
@@ -114,19 +229,11 @@ form label{
     padding: 0.5em;
   }
 
-  .usuario-view article{
+  .usuario-view article, .tableros-view article{
     border-radius: 1rem;
-    background-color: black;
-    color:white;
     margin: 1.5em auto;
     width: 95%;
     padding: 1em;
-    background-color: rgb(59, 61, 97);
-    transition: opacity 1s;
-  }
-
-  .usuario-view article:hover,.usuario-view article:focus{
-    opacity: 0.9;
   }
 
   .usuario-view article h2{
@@ -150,17 +257,74 @@ form label{
     font-family: Arial, Helvetica, sans-serif;
   }
 
-  .usuario-view .btn-actions{
+  .btn-actions{
     display: flex;
     flex-direction: column;
     width: 50%;
     margin: 0 auto;
   }
 
-  .usuario-view .btn-actions a{
+  .btn-actions a{
     margin-bottom: 1em;
     padding: 0.5em;
   }
+
+  .tableros-view article p{
+    font-size: 1.2em;
+  }
+
+  #tablerosCTA a{
+    width: 90%;
+  }
+
+  .estado-tarea{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1em;
+  }
+
+  .estado-tarea div{
+    display: flex;
+    flex-direction: row;
+  }
+
+  .estado-tarea div h2{
+    width: 90%;
+  }
+
+  .estado-tarea div a{
+    width: 10%;
+  }
+
+  .estado-tarea div a svg{
+    max-width: 2em;
+    max-height: 2em;
+  }
+
+  .estado-tarea button{
+    color: white;
+    width: 90%;
+    margin: 1em auto;
+    border-radius: 1rem;
+    padding: 0.5em;
+  }
+
+  .modal-footer form{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  .modal-footer form select, .modal-footer form input[type="submit"]{
+    width: 50%;
+  }
+
+  .modal-footer form input[type="submit"]{
+    margin-left: 0.5em;
+    padding: 0.5em;
+  }  
 
   form{
     width: 90vw;
@@ -209,6 +373,42 @@ form label{
     box-shadow: 0.2em 0.2em rgb(52, 51, 51);
   }
 
+  .estado-tarea{
+    width: 90%;
+    margin: 1em auto;
+    border-radius: 1rem;
+  }
+
+  #Ideas:hover, #Ideas:focus{
+    box-shadow: 0.25em 0.25em #18579b;
+  }
+  
+  #ToDo:hover, #ToDo:focus{
+    box-shadow: 0.25em 0.25em rgb(102, 109, 0);
+  }
+  
+  #Doing:hover, #Doing:focus{
+    box-shadow: 0.25em 0.25em rgb(82, 0, 158);
+  }
+  
+  #Review:hover, #Review:focus{
+    box-shadow: 0.25em 0.25em rgb(137, 0, 0);
+  }
+  
+  #Done:hover, #Review:focus{
+    box-shadow: 0.25em 0.25em rgb(0, 71, 0);
+  }
+
+  .mensaje-error{
+    width: 95vw;
+    padding: 1em;
+    margin: 0 auto;
+    margin-top: 1em;
+    border-radius: 1rem;
+    font-size: 1.2em;
+    text-align: center;
+  }
+
   footer{
     background-color: rgb(75, 73, 73);
     text-align: center;
@@ -242,8 +442,42 @@ form label{
     width: 40%;
   }
 
+  .tableros-view article{
+    text-align: left;
+  }
+
+  .tableros-view .btn-actions{
+    display: flex;
+    flex-direction: row;
+    margin-top: 1em;
+    margin-left: 0;
+  }
+
+  .tableros-view .btn-actions a{
+    margin-right: 1.5em;
+    margin-bottom: 0;
+  }
+
+  #tablerosCTA a{
+    width: 30%;
+  }
+
+  .tablero{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .estado-tarea{
+    width: 30%;
+  }
+
   form{
     margin: 25vw auto;
+    width: 70%;
+  }
+
+  .mensaje-error{
     width: 70%;
   }
 
@@ -256,7 +490,7 @@ form label{
 @media all and (min-width: 1024px)
 {
   .form-logueo{
-    width: 25%;
+    width: 30%;
     margin: 10vw auto;
   }
 
@@ -284,128 +518,20 @@ form label{
     flex-wrap: wrap;
     justify-content: center;
   }
+
+  .tableros-view article{
+    width: 60%;
+  }
+
+  .estado-tarea{
+    width: 18%;
+  }
+
+  .tablero{
+    justify-content: space-between;
+  }
+
+  .mensaje-error{
+    width: 30%;
+  }
 }
-
-/*.home article figure{
-  width: 40%;
-  margin: 0 auto;
-}
-
-.home article figure img{
-  width: 100%;
-}*/
-
-/*.navbar-collapse{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}*/
-
-
-/*.content-view{
-  margin:1.5em auto;
-}
-
-.title-view{
-  margin-bottom:1.5em;
-}
-
-.form-view{
-  width: 50%;
-  margin:2em auto;
-}
-
-form input[type="submit"]{
-  margin-top: 2em;
-}
-
-.btn-add{
-  margin-top:1.5em;
-  margin-bottom:1.5em;
-}
-
-table{
-  text-align: center;
-}
-
-footer{
-  background-color: rgb(75, 73, 73);
-  text-align: center;
-  padding: 1em;
-  margin-top: auto;
-}
-
-footer div{
-  color: white;
-}
-
-.form-logger{
-  margin: 3em auto;
-  width: 30%;
-}
-
-.content-tableros{
-  width: 80%;
-  margin: 1em auto;
-}
-
-.content-tableros article{
-  border: 0.15em solid rgb(255, 153, 0);
-  color:black;
-  border-radius: 1rem 1rem;
-  margin: 1em auto;
-  padding: 0.5em;
-  box-sizing: border-box;
-  transition: color 0.5s ease, background-color 0.5s;
-}
-
-.content-tableros article:hover, .content-tableros article:focus{
-  background-color: rgba(255, 153, 0, 0.6);
-  color: white;
-}
-
-form{
-  background-color: rgb(63, 60, 60);
-  padding: 1em;
-  box-sizing:border-box;
-  border-radius:1rem;
-  transition: box-shadow 1s, opacity 1s;
-}
-
-label{
-  color:white;
-}
-
-input[type="text"], input[type="password"]{
-  border-radius: 2rem;
-}
-
-form section{
-  margin: 1em auto;
-}
-
-form:hover, form:focus{
-  box-shadow: 0.5em 0.5em rgb(137, 136, 136);
-  opacity: 0.9;
-}
-
-.form-logger input[type="submit"]{
-  width: 100%;
-  background-color: white;
-  color:#258cfb;
-  border-radius: 2rem;
-  font-weight: bold;
-}
-
-.form-logger input[type="submit"]:hover, .form-logger input[type="submit"]:focus{
-  background-color: #258cfb;
-  color:white;
-}
-
-.form-select{
-  border-radius:2rem;
-}
-
-.form-view{
-  width: 90%;
-}*/
