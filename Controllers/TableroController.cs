@@ -50,7 +50,7 @@ public class TableroController: Controller
             {
                 if(idUsuarioPropietario == null)
                 {
-                    var usuariosPropietarios = _usuariosRepo.GetAllUsuarios();
+                    var usuariosPropietarios = _usuariosRepo.GetAllUsuarios().Where(usuario => usuario.Id != Convert.ToInt32(HttpContext.Session.GetString("id"))).ToList();;
                     var tablerosUsuarios = _tablerosRepo.GetAllTableros().Where(tablero => tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))).ToList();
                     return View(new ListaTablerosUsuarioViewModel(tablerosUsuarios, usuariosPropietarios));
                 }
@@ -63,7 +63,7 @@ public class TableroController: Controller
                 }
             }
             
-            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorización para ingresar a la página."});
+            return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 401. No tiene autorización para ingresar a la página."});
         }
         catch(Exception ex)
         {
@@ -98,7 +98,7 @@ public class TableroController: Controller
         try
         {
             var tablero = _tablerosRepo.GetTablero(idTablero);
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para actualizar el tablero de otro usuario."});
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 401. No tiene autorización para actualizar el tablero de otro usuario."});
             var usuarioPropietario = _usuariosRepo.GetUsuario(tablero.IdUsuarioPropietario);
             var tableroUsuario = new TableroUsuarioViewModel{Tablero = new TableroViewModel(tablero), Usuario = new UsuarioViewModel(usuarioPropietario)};
             return View(tableroUsuario);
@@ -142,7 +142,7 @@ public class TableroController: Controller
 
         try
         {
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tableroUVM.Tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para actualizar el tablero de otro usuario."});
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && tableroUVM.Tablero.IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 401. No tiene autorización para actualizar el tablero de otro usuario."});
             var tableroActualizado = new Tablero(tableroUVM.Tablero);
             _tablerosRepo.ModificarTablero(tableroActualizado);
             
@@ -166,9 +166,9 @@ public class TableroController: Controller
         try
         {
             var IdUsuarioPropietario = _tablerosRepo.GetTablero(idTablero).IdUsuarioPropietario;
-            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 400. No tiene autorizacion para eliminar el tablero de otro usuario."});
+            if(rolUsuarioAutenticado != Rol.Administrador.ToString() && IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return View("Views/Shared/Error.cshtml", new ErrorViewModel{message = "ERROR 401. No tiene autorización para eliminar el tablero de otro usuario."});
             
-            foreach(var tarea in _tareasRepo.GetTareasDeTablero(idTablero)) _tareasRepo.EliminarTarea(tarea.Id);
+            foreach(var tarea in _tareasRepo.GetTareasDelTablero(idTablero)) _tareasRepo.EliminarTarea(tarea.Id);
             _tablerosRepo.EliminarTablero(idTablero);
             
             if(IdUsuarioPropietario != Convert.ToInt32(HttpContext.Session.GetString("id"))) return RedirectToAction("ListarTablerosUsuario");
