@@ -49,7 +49,7 @@
                             </article>
                             <section class="modal-footer">
                                 <form asp-controller="Tarea" asp-action="ActualizarEstado" method="post">
-                                    <select for="estadoTarea" class="form-select">
+                                    <select for="estadoTarea" class="form-select" name="estadoNuevo">
                                         @foreach(var estado in (EstadoTarea[])Enum.GetValues(typeof(EstadoTarea)))
                                         {
                                             if(tarea.Estado == estado){
