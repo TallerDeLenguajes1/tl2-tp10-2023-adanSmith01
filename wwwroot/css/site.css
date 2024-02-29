@@ -504,12 +504,19 @@ form label{
     margin-left: 1em;
   }
 
+  .usuario-view{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
   .usuario-view article{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-    width: 25%;
+    width: 28%;
   }
 
   .usuario-view{
